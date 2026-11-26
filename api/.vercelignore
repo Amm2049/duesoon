@@ -1,0 +1,7 @@
+# Files the Vercel CLI must not upload (D-23, D-26)
+node_modules
+.env
+# Created by `vercel link` (holds VERCEL_OIDC_TOKEN); any other local env files too
+.env*.local
+.env.*
+!.env.example

@@ -1,0 +1,65 @@
+// DueSoon data model (SPEC §3). DB = snake_case, Prisma code = camelCase.
+
+generator client {
+  provider = "prisma-client-js" // D-34: works with CommonJS require
+}
+
+datasource db {
+  provider = "postgresql" // Neon (D-39). Prisma 7: URL comes from prisma.config.js
+}
+
+enum TaskType {
+  assignment
+  exam
+  quiz
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  name         String     @db.VarChar(50)
+  email        String     @unique @db.VarChar(100) // stored lowercased + trimmed
+  passwordHash String     @map("password_hash") @db.VarChar(100)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  tasks        Task[]
+  done         TaskDone[]
+
+  @@map("users")
+}
+
+model Course {
+  id    Int    @id @default(autoincrement())
+  code  String @unique @db.VarChar(20)
+  name  String @db.VarChar(100)
+  tasks Task[]
+
+  @@map("courses")
+}
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  courseId    Int        @map("course_id")
+  title       String     @db.VarChar(100)
+  type        TaskType
+  dueDate     DateTime   @map("due_date") @db.Date
+  description String?    @db.Text
+  createdBy   Int        @map("created_by")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  course      Course     @relation(fields: [courseId], references: [id])
+  creator     User       @relation(fields: [createdBy], references: [id])
+  done        TaskDone[]
+
+  @@index([dueDate])
+  @@map("tasks")
+}
+
+model TaskDone {
+  userId Int      @map("user_id")
+  taskId Int      @map("task_id")
+  doneAt DateTime @default(now()) @map("done_at")
+  user   User     @relation(fields: [userId], references: [id])
+  task   Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@id([userId, taskId])
+  @@map("task_done")
+}

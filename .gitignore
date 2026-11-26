@@ -1,0 +1,23 @@
+# --- Secrets: never commit (SPEC §7) ---
+.env
+.env.*
+!.env.example
+.vercel/
+
+# --- API ---
+node_modules/
+
+# --- Flutter / Android (app/.gitignore covers the rest) ---
+app/build/
+app/.dart_tool/
+**/android/local.properties
+**/android/key.properties
+*.jks
+*.keystore
+
+# --- OS / editors ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
