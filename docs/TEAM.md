@@ -5,8 +5,10 @@ API routes + database code behind them. In your part, focus on what we were taug
 (Flutter widgets, navigation, forms, http + JSON, Express routes, REST, database queries).
 Demo order follows the user's path: **log in → browse → manage**.
 
-**Learn your part:** open [`code-guide.html`](code-guide.html) in a browser and press your member
-button (or add `?member=1`, `2` or `3` to the address). It has every file's code, step-by-step flows
+**Learn your part:** https://amm2049.github.io/duesoon/code-guide.html, then press your member button.
+Direct links: [Member 1](https://amm2049.github.io/duesoon/code-guide.html?member=1) ·
+[Member 2](https://amm2049.github.io/duesoon/code-guide.html?member=2) ·
+[Member 3](https://amm2049.github.io/duesoon/code-guide.html?member=3). It has every file's code, step-by-step flows
 with line links, and practice questions.
 
 ## Member 1: Getting in (accounts)

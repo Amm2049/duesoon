@@ -28,7 +28,7 @@ Tick `PLAN.md`, add a dated line to `PROGRESS.md`, log decisions in `SPEC.md` §
 | app/ | `flutter run --dart-define=API_BASE=http://10.0.2.2:3000` | run against local `npm run dev` (10.0.2.2 = the PC from inside the emulator). **Untested**: Android may block plain `http://` |
 | app/ | `flutter build apk --release` | release APK → `build/app/outputs/flutter-apk/app-release.apk` (demo backup, D-48) |
 | app/ | `flutter build web --release` then in `build/web/`: `vercel --prod` | deploy web → https://duesoon-web-phi.vercel.app. After `flutter clean`: `vercel link --yes --project duesoon-web` + recreate `.vercelignore` (`.env*`, `.gitignore`, `*.map`) first (D-49) |
-| root | `node docs/tools/build-code-guide.js` | rebuild `docs/code-guide.html` after code changes (stops with an error if a line reference no longer matches) |
+| root | `node docs/tools/build-code-guide.js` | rebuild `docs/code-guide.html` after code changes (stops with an error if a line reference no longer matches). Pushing `docs/` to `main` republishes it on GitHub Pages: https://amm2049.github.io/duesoon/code-guide.html |
 | app/ | `flutter test` | unit/widget tests |
 | app/ | `flutter analyze` | lint/type check |
 
