@@ -8,6 +8,7 @@
 - Owner review of [Default] decisions in SPEC §2 (D-10, D-13, D-19, D-22, D-35…D-38)
 
 ## Log (newest first)
+- **2026-11-26**: Roles named: Grace = Member 1, Billy = Member 2, Kimmy = Member 3 (TEAM.md + guide buttons). Added `docs/start.html`: one-page onboarding for teammates (their guide links, clone/pull, VS Code shortcuts, ready checklist).
 - **2026-11-26**: Gaps in the team split closed: project-wide topics assigned (M1 run/deploy/secrets/extras, M2 setup files + Neon/Prisma choice, M3 design/REST/testing) in `docs/TEAM.md`. Code guide: 4 more files (prisma.config.js, check-db.js, package.json, build.gradle.kts), setup files now under Member 2, new "Project-wide questions" section (11 Q&A).
 - **2026-11-26**: GitHub Pages on (main, `/docs`): guide live at https://amm2049.github.io/duesoon/code-guide.html (checked in Chrome: filter + screenshots load). Links added to README, TEAM.md, CLAUDE.md.
 - **2026-11-26**: Team split is now full-stack: each member owns their screens + the API routes/DB code behind them (`docs/TEAM.md`). Code guide updated: backend files per member with line notes, 3 server flows, backend glossary (Express, middleware, status codes, JWT, bcrypt, Prisma vs mysql2), backend practice questions.

@@ -11,9 +11,9 @@ const OUT = path.join(ROOT, "docs", "code-guide.html");
 
 // ---------------------------------------------------------------- members
 const MEMBERS = {
-  1: { name: "Member 1", part: "Getting in", short: "Accounts", desc: "App: Splash, Login, Register, Logout, session, form checks. Server: /register, /login, /me, the token check (middleware), JWT, password hashing, users table. Project-wide: running + deploying, secrets (.env), web version / APK / Git." },
-  2: { name: "Member 2", part: "Seeing tasks", short: "Lists", desc: "App: Home tabs, task cards, done checkbox, loading data with http. Server: GET /tasks, POST/DELETE /tasks/:id/done, the list query, Bangkok \"today\" and days_left, the database tables. Project-wide: setup files (index.js, db.js, Prisma config, seed), why Neon + Prisma." },
-  3: { name: "Member 3", part: "Managing tasks", short: "CRUD", desc: "App: task detail, add / edit form, delete. Server: GET/POST/PUT/DELETE /tasks/:id, the owner check (404 then 403), task validation, /courses. Project-wide: overall design (why an API), REST design, testing." },
+  1: { name: "Member 1 (Grace)", part: "Getting in", short: "Accounts", desc: "App: Splash, Login, Register, Logout, session, form checks. Server: /register, /login, /me, the token check (middleware), JWT, password hashing, users table. Project-wide: running + deploying, secrets (.env), web version / APK / Git." },
+  2: { name: "Member 2 (Billy)", part: "Seeing tasks", short: "Lists", desc: "App: Home tabs, task cards, done checkbox, loading data with http. Server: GET /tasks, POST/DELETE /tasks/:id/done, the list query, Bangkok \"today\" and days_left, the database tables. Project-wide: setup files (index.js, db.js, Prisma config, seed), why Neon + Prisma." },
+  3: { name: "Member 3 (Kimmy)", part: "Managing tasks", short: "CRUD", desc: "App: task detail, add / edit form, delete. Server: GET/POST/PUT/DELETE /tasks/:id, the owner check (404 then 403), task validation, /courses. Project-wide: overall design (why an API), REST design, testing." },
   s: { name: "Shared", part: "Setup", short: "Shared", desc: "index.js (the Express app), db.js + prisma.config.js (database), dev.js, seed, check-db, package.json, Flutter/Android config. Member 2 explains these; everyone should know index.js." },
 };
 
@@ -827,9 +827,9 @@ th,td{text-align:left;padding:7px 12px;border-bottom:1px solid var(--line)}th{co
   <h1>DueSoon <span>code guide</span></h1>
   <div class="filters" role="group" aria-label="Show">
     <button data-f="all" aria-pressed="true">Whole project</button>
-    <button data-f="1">M1 · ${esc(MEMBERS[1].part)}</button>
-    <button data-f="2">M2 · ${esc(MEMBERS[2].part)}</button>
-    <button data-f="3">M3 · ${esc(MEMBERS[3].part)}</button>
+    <button data-f="1">Grace · ${esc(MEMBERS[1].part)}</button>
+    <button data-f="2">Billy · ${esc(MEMBERS[2].part)}</button>
+    <button data-f="3">Kimmy · ${esc(MEMBERS[3].part)}</button>
     <button data-f="s">Shared</button>
   </div>
   <input id="q" type="search" placeholder="Search files (e.g. login, Checkbox)…" aria-label="Search files">
