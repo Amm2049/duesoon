@@ -11,10 +11,10 @@ const OUT = path.join(ROOT, "docs", "code-guide.html");
 
 // ---------------------------------------------------------------- members
 const MEMBERS = {
-  1: { name: "Member 1", part: "Getting in", short: "Accounts", desc: "Splash, Login, Register, Logout, session and form checks" },
-  2: { name: "Member 2", part: "Seeing tasks", short: "Lists", desc: "Home tabs, task cards, done checkbox, loading data from the API" },
-  3: { name: "Member 3", part: "Managing tasks", short: "CRUD", desc: "Task detail, add / edit form, delete" },
-  s: { name: "Shared", part: "Server + setup", short: "Shared", desc: "Express API, database, config. Done and working; know it at a high level" },
+  1: { name: "Member 1", part: "Getting in", short: "Accounts", desc: "App: Splash, Login, Register, Logout, session, form checks. Server: /register, /login, /me, the token check (middleware), JWT, password hashing, users table." },
+  2: { name: "Member 2", part: "Seeing tasks", short: "Lists", desc: "App: Home tabs, task cards, done checkbox, loading data with http. Server: GET /tasks, POST/DELETE /tasks/:id/done, the list query, Bangkok \"today\" and days_left, the database tables." },
+  3: { name: "Member 3", part: "Managing tasks", short: "CRUD", desc: "App: task detail, add / edit form, delete. Server: GET/POST/PUT/DELETE /tasks/:id, the owner check (404 then 403), task validation, /courses." },
+  s: { name: "Shared", part: "Setup", short: "Shared", desc: "index.js (the Express app), db.js (database connection), dev.js, seed, Flutter/Android config. Everyone should know index.js; Member 2 can explain the rest in a minute." },
 };
 
 // ---------------------------------------------------------------- files
@@ -232,42 +232,121 @@ const FILES = [
       { find: "String addDays(String ymd, int days)", note: "\"2026-12-31\" + 1 → \"2027-01-01\"" },
     ] },
 
-  // ===== Shared
+  // ===== Backend, owned per feature (full-stack split)
+  { path: "api/src/routes/auth.js", owners: [1], what: "<b>Member 1's REST routes.</b> <code>POST /register</code> (check input, hash the password with bcrypt, save the user, return a token), <code>POST /login</code> (find the user, compare the password, return a token) and <code>GET /me</code>.",
+    keys: [
+      { find: "const router = express.Router();", note: "An Express <code>Router</code>: a group of routes mounted in <code>index.js</code>" },
+      { find: "router.post(\"/register\", async (req, res) => {", note: "<b>POST /register</b>" },
+      { find: "const { error, value } = validateRegister(req.body);", note: "Check the JSON body; bad input → 400" },
+      { find: "const passwordHash = await bcrypt.hash(value.password, BCRYPT_COST);", note: "Never store the real password, only a bcrypt hash" },
+      { find: "if (!user) return res.status(409).json({ error: \"Email already registered\" });", note: "409 Conflict: email taken" },
+      { find: "res.status(201).json({ token: signToken(user), user });", note: "201 Created + token (the app saves it in <code>Session</code>)" },
+      { find: "router.post(\"/login\", async (req, res) => {", note: "<b>POST /login</b>" },
+      { find: "const passwordOk = await bcrypt.compare(value.password, row ? row.passwordHash : DUMMY_HASH);", note: "Compare typed password with the stored hash" },
+      { find: "if (!row || !passwordOk) return res.status(401).json({ error: \"Invalid email or password\" });", note: "Same 401 message for unknown email and wrong password (don't reveal which)" },
+      { find: "router.get(\"/me\", requireAuth, (req, res) => {", note: "<code>GET /me</code>: who does this token belong to?" },
+    ] },
+  { path: "api/src/middleware/auth.js", owners: [1], what: "<b>The login check for every protected route.</b> Express <i>middleware</i> runs before the route: it reads <code>Authorization: Bearer &lt;token&gt;</code>, verifies it, and puts the user in <code>req.user</code>. No token or a bad token → 401, and the route never runs.",
+    keys: [
+      { find: "function requireAuth(req, res, next) {", note: "Middleware = function(req, res, <b>next</b>)" },
+      { find: "req.get(\"authorization\")", note: "Read the header the app sends" },
+      { find: "if (!match) return res.status(401).json({ error: \"Not logged in\" });", note: "No token → 401" },
+      { find: "req.user = verifyToken(match[1]);", note: "Valid → <code>req.user = { id, name }</code>; routes use <code>req.user.id</code>" },
+      { find: "return next();", note: "<code>next()</code> = continue to the route" },
+      { find: "if (err.name === \"TokenExpiredError\") {", note: "Expired → 401 \"Session expired\" (the app sends you to Login)" },
+    ] },
+  { path: "api/src/lib/token.js", owners: [1], what: "Creates and checks login tokens (JWT). The token holds the user's id and name, is signed with the secret <code>JWT_SECRET</code> from <code>.env</code>, and expires after 7 days.",
+    keys: [
+      { find: "const s = process.env.JWT_SECRET;", note: "Secret comes from <code>.env</code> (dotenv), never from the code" },
+      { find: "function signToken(user) {", note: "Make a token after login/register" },
+      { find: "function verifyToken(token) {", note: "Check a token (used by the middleware)" },
+    ] },
+  { path: "api/src/repos/users.js", owners: [1], what: "Database code for users (Prisma). Like a mysql2 query file: <code>findUnique</code> ≈ <code>SELECT … WHERE email = ?</code>, <code>create</code> ≈ <code>INSERT</code>.",
+    keys: [
+      { find: "function findByEmailForLogin(email) {", note: "<code>SELECT * FROM users WHERE email = ?</code>" },
+      { find: "const user = await prisma.user.create({ data: { name, email, passwordHash } });", note: "<code>INSERT INTO users …</code>" },
+      { find: "if (err.code === \"P2002\") return null;", note: "Email already exists (UNIQUE) → the route answers 409" },
+    ] },
+  { path: "api/src/lib/validate.js", owners: [1, 3], what: "The server's input rules (the app's <code>validators.dart</code> mirrors them, but <b>the server is the real rule</b>). Each function returns <code>{ error }</code> or <code>{ value }</code> (cleaned input).",
+    keys: [
+      { find: "function validateRegister(body) {", note: "<b>Member 1</b>: name, email, password 6+" },
+      { find: "function validateLogin(body) {", note: "<b>Member 1</b>: email + password present" },
+      { find: "function validateTask(body, { today, isCreate }) {", note: "<b>Member 3</b>: title, course, type, due date, description" },
+      { find: "if (isCreate && b.due_date < today) return fail(\"Due date cannot be in the past\");", note: "<b>Member 3</b>: no past dates for new tasks" },
+      { find: "function parseId(param) {", note: "<code>/tasks/:id</code> → a number, or 404" },
+    ] },
+  { path: "api/src/routes/tasks.js", owners: [2, 3], what: "All <code>/tasks</code> REST routes. <b>Member 2</b>: the list (<code>GET /tasks</code>) and done (<code>POST/DELETE /tasks/:id/done</code>). <b>Member 3</b>: one task (<code>GET /tasks/:id</code>), create, edit, delete, and the owner check. The user always comes from the token (<code>req.user.id</code>), never from the request body.",
+    keys: [
+      { find: "async function checkOwner(id, req, res) {", note: "<b>Member 3</b>: 404 if missing, then 403 if not the creator" },
+      { find: "router.get(\"/\", async (req, res) => {", note: "<b>Member 2</b>: GET /tasks?filter=week|all|done" },
+      { find: "res.json(await tasks.listTasks({ me: req.user.id, today: todayBangkok(), filter }));", note: "<b>Member 2</b>: me = token's user, today = Bangkok date" },
+      { find: "router.get(\"/:id\", async (req, res) => {", note: "<b>Member 3</b>: GET /tasks/:id" },
+      { find: "router.post(\"/\", async (req, res) => {", note: "<b>Member 3</b>: POST /tasks (validate → 400, else 201)" },
+      { find: "router.put(\"/:id\", async (req, res) => {", note: "<b>Member 3</b>: PUT /tasks/:id (creator only)" },
+      { find: "router.delete(\"/:id\", async (req, res) => {", note: "<b>Member 3</b>: DELETE /tasks/:id → 204 No Content" },
+      { find: "router.post(\"/:id/done\", async (req, res) => {", note: "<b>Member 2</b>: mark done for me → <code>{ done, done_count }</code>" },
+      { find: "router.delete(\"/:id/done\", async (req, res) => {", note: "<b>Member 2</b>: undo done" },
+    ] },
+  { path: "api/src/repos/tasks.js", owners: [2, 3], what: "Database code for tasks (Prisma). Turns database rows (camelCase, Date objects) into the JSON the app gets (snake_case, \"YYYY-MM-DD\", <code>days_left</code>).",
+    keys: [
+      { find: "function toTaskListItem(t, today) {", note: "<b>Member 2</b>: row → JSON for the list (adds <code>days_left</code>, <code>done</code>)" },
+      { find: "async function listTasks({ me, today, filter }) {", note: "<b>Member 2</b>: the list query" },
+      { find: "where = { dueDate: { lte: fromDateStr(addDays(today, 7)) }, done: { none: { userId: me } } };", note: "<b>Member 2</b>: This Week = due ≤ today+7 AND not done by me" },
+      { find: "orderBy: [{ dueDate: \"asc\" }, { id: \"asc\" }],", note: "<b>Member 2</b>: <code>ORDER BY due_date</code>" },
+      { find: "async function getTaskDetail(id, { me, today }) {", note: "<b>Member 3</b>: one task + creator name + done count" },
+      { find: "_count: { select: { done: true } },", note: "<b>Member 3</b>: Prisma writes the COUNT query for us" },
+      { find: "async function createTask(data, me) {", note: "<b>Member 3</b>: INSERT" },
+      { find: "async function updateTask(id, data) {", note: "<b>Member 3</b>: UPDATE" },
+      { find: "async function deleteTask(id) {", note: "<b>Member 3</b>: DELETE (done rows go too: ON DELETE CASCADE)" },
+      { find: "async function markDone(me, taskId) {", note: "<b>Member 2</b>: insert into task_done (twice = still one row)" },
+      { find: "async function unmarkDone(me, taskId) {", note: "<b>Member 2</b>: delete from task_done" },
+    ] },
+  { path: "api/src/lib/dates.js", owners: [2], what: "All server date logic. <code>todayBangkok()</code> is \"today\" for everyone, and <code>daysBetween</code> computes <code>days_left</code>, so every phone shows the same \"2 days left\".",
+    keys: [
+      { find: "function todayBangkok(now = new Date()) {", note: "Today in Bangkok (UTC+7)" },
+      { find: "function daysBetween(from, to) {", note: "<code>days_left</code> = days from today to the due date" },
+    ] },
+  { path: "api/prisma/schema.prisma", owners: [2, "s"], lang: "prisma", what: "<b>The database tables</b> (like the <code>CREATE TABLE</code> SQL from class): users, courses, tasks, and task_done (who finished which task). <code>npx prisma db push</code> creates them in the database.",
+    keys: [
+      { find: "model User {", note: "users table; email is UNIQUE" },
+      { find: "model Course {", note: "courses table" },
+      { find: "model Task {", note: "tasks: belongs to a course and its creator" },
+      { find: "@@index([dueDate])", note: "Index so sorting/filtering by due date is fast" },
+      { find: "model TaskDone {", note: "<b>task_done</b>: one row = one user finished one task (this is how done is per person)" },
+      { find: "@@id([userId, taskId])", note: "Primary key (user, task): can't be done twice" },
+    ] },
+  { path: "api/src/routes/courses.js", owners: [3], what: "<code>GET /courses</code>: the course list for the Add/Edit form's dropdown.",
+    keys: [{ find: "router.get(\"/\", async (req, res) => {", note: "GET /courses" }] },
+  { path: "api/src/repos/courses.js", owners: [3], what: "Database code for courses.",
+    keys: [
+      { find: "function listCourses() {", note: "<code>SELECT id, code, name FROM courses ORDER BY code</code>" },
+      { find: "async function courseExists(id) {", note: "Used before saving a task (bad course → 400)" },
+    ] },
+
+  // ===== Shared setup
+  { path: "api/src/index.js", owners: ["s"], what: "<b>The server app</b> (everyone should know this one). Creates Express, adds <code>cors</code> and JSON parsing, mounts each member's routes, and turns unknown routes and crashes into JSON errors. Vercel runs this file.",
+    keys: [
+      { find: "require(\"dotenv\").config({ quiet: true });", note: "dotenv: load secrets from <code>.env</code>" },
+      { find: "const app = express();", note: "Create the Express app" },
+      { find: "app.use(cors());", note: "cors: allow the web app (another domain) to call the API" },
+      { find: "app.use(express.json({ limit: \"100kb\" }));", note: "Parse JSON bodies into <code>req.body</code>" },
+      { find: "app.use(authRoutes);", note: "<b>Member 1</b>'s routes" },
+      { find: "app.use(\"/courses\", requireAuth, courseRoutes);", note: "<b>Member 3</b>: /courses (login required)" },
+      { find: "app.use(\"/tasks\", requireAuth, taskRoutes);", note: "<b>Members 2 + 3</b>: /tasks (login required)" },
+      { find: "app.use((req, res) => res.status(404).json({ error: \"Not found\" }));", note: "Unknown URL → JSON 404" },
+      { find: "app.use((err, req, res, next) => {", note: "Any crash → 500 \"Something went wrong\"" },
+      { find: "module.exports = app;", note: "Export for Vercel (no <code>app.listen</code> here)" },
+    ] },
+  { path: "api/src/dev.js", owners: ["s"], what: "Runs the server on your PC: <code>npm run dev</code> → http://localhost:3000.", keys: [{ find: "app.listen(", note: "<code>app.listen</code> only for local dev" }] },
+  { path: "api/src/db.js", owners: ["s"], what: "Creates the one Prisma client that talks to the Neon Postgres database (like creating the mysql2 connection in class). The database URL comes from <code>.env</code>.",
+    keys: [
+      { find: "const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });", note: "Connect using <code>DATABASE_URL</code> from .env" },
+      { find: "log: process.env.PRISMA_LOG ? [\"query\"] : [],", note: "<code>PRISMA_LOG=1 npm run dev</code> prints the SQL Prisma writes" },
+    ] },
+  { path: "api/prisma/seed.js", owners: ["s"], what: "Fills the database with demo users and tasks (dates relative to today). Run with <code>npx prisma db seed</code> before a demo.", keys: [] },
   { path: "app/pubspec.yaml", owners: ["s"], lang: "yaml", what: "Flutter project settings: app name, Dart version, packages (<code>http</code>, <code>material_ui</code>).", keys: [] },
   { path: "app/android/app/src/main/AndroidManifest.xml", owners: ["s"], lang: "xml", what: "Android settings: app label \"DueSoon\" and the INTERNET permission (needed to reach the API).",
     keys: [{ find: "android.permission.INTERNET", note: "Without this, release builds can't call the API" }] },
-  { path: "api/src/index.js", owners: ["s"], what: "<b>The server app.</b> Express with CORS and JSON, the routes, a JSON 404, and one error handler. Vercel runs this file.",
-    keys: [
-      { find: "app.use(cors());", note: "Allow the web app to call the API" },
-      { find: "app.use(\"/tasks\", requireAuth, taskRoutes);", note: "All /tasks routes need a login token" },
-    ] },
-  { path: "api/src/dev.js", owners: ["s"], what: "Runs the server on your PC (<code>npm run dev</code>, port 3000).", keys: [] },
-  { path: "api/src/db.js", owners: ["s"], what: "Creates the one Prisma client that talks to the Neon Postgres database.", keys: [] },
-  { path: "api/src/middleware/auth.js", owners: ["s"], what: "Checks the <code>Authorization: Bearer &lt;token&gt;</code> header on protected routes and sets <code>req.user</code>. No/invalid token → 401.",
-    keys: [{ find: "function requireAuth(req, res, next) {", note: "The login check" }] },
-  { path: "api/src/lib/token.js", owners: ["s"], what: "Creates and checks login tokens (JWT, valid 7 days).", keys: [] },
-  { path: "api/src/lib/validate.js", owners: ["s"], what: "The server's input rules (same as <code>validators.dart</code> in the app). The server is the real rule.", keys: [] },
-  { path: "api/src/lib/dates.js", owners: ["s"], what: "\"Today\" in Bangkok and date math, so <code>days_left</code> is the same for everyone.", keys: [] },
-  { path: "api/src/routes/auth.js", owners: ["s"], what: "POST /register, POST /login (passwords checked with bcrypt), GET /me.",
-    keys: [{ find: "router.post(\"/login\", async (req, res) => {", note: "Login: same error for wrong password and unknown email" }] },
-  { path: "api/src/routes/tasks.js", owners: ["s"], what: "All /tasks routes: list, detail, create, edit, delete, done/undone. The user always comes from the token. Edit/delete: 404 if missing, 403 if not the creator.",
-    keys: [
-      { find: "async function checkOwner(id, req, res) {", note: "404 then 403" },
-      { find: "router.get(\"/\", async (req, res) => {", note: "GET /tasks?filter=" },
-      { find: "router.post(\"/\", async (req, res) => {", note: "POST /tasks" },
-      { find: "router.post(\"/:id/done\", async (req, res) => {", note: "Mark done (for me only)" },
-    ] },
-  { path: "api/src/routes/courses.js", owners: ["s"], what: "GET /courses.", keys: [] },
-  { path: "api/src/repos/tasks.js", owners: ["s"], what: "All database queries for tasks (Prisma). Converts database rows to the JSON the app receives, including <code>days_left</code> and <code>done</code> for the current user.",
-    keys: [{ find: "function toTaskListItem(t, today) {", note: "Database row → JSON for the app" }] },
-  { path: "api/src/repos/users.js", owners: ["s"], what: "Database queries for users.", keys: [] },
-  { path: "api/src/repos/courses.js", owners: ["s"], what: "Database queries for courses.", keys: [] },
-  { path: "api/prisma/schema.prisma", owners: ["s"], lang: "prisma", what: "<b>The database tables</b>: users, courses, tasks, and task_done (who finished which task).",
-    keys: [
-      { find: "model Task {", note: "A task belongs to a course and its creator" },
-      { find: "model TaskDone {", note: "One row = one user finished one task" },
-    ] },
-  { path: "api/prisma/seed.js", owners: ["s"], what: "Fills the database with demo users and tasks (dates relative to today). Run with <code>npx prisma db seed</code>.", keys: [] },
 ];
 
 const TESTS = [
@@ -348,7 +427,43 @@ const FLOWS = [
   ] },
 ];
 
-// ---------------------------------------------------------------- glossary (Flutter/Dart)
+// Server-side flows (one per member)
+FLOWS.push(
+  { owners: [1], title: "Server: what happens on POST /login", steps: [
+    ["api/src/index.js", "app.use(express.json({ limit: \"100kb\" }));", "Express turns the JSON body into <code>req.body</code>."],
+    ["api/src/index.js", "app.use(authRoutes);", "The request reaches Member 1's router."],
+    ["api/src/routes/auth.js", "router.post(\"/login\", async (req, res) => {", "The login route runs."],
+    ["api/src/lib/validate.js", "function validateLogin(body) {", "Input check (missing fields → 400)."],
+    ["api/src/repos/users.js", "function findByEmailForLogin(email) {", "Find the user by email in the database."],
+    ["api/src/routes/auth.js", "const passwordOk = await bcrypt.compare(value.password, row ? row.passwordHash : DUMMY_HASH);", "bcrypt compares the password with the stored hash."],
+    ["api/src/lib/token.js", "function signToken(user) {", "Create a JWT signed with <code>JWT_SECRET</code>."],
+    ["api/src/routes/auth.js", "const user = users.toUserJson(row);", "Answer <code>{ token, user }</code> as JSON (200)."],
+    ["api/src/middleware/auth.js", "function requireAuth(req, res, next) {", "Every later request: this middleware checks the token first."],
+  ] },
+  { owners: [2], title: "Server: building the This Week list", steps: [
+    ["api/src/index.js", "app.use(\"/tasks\", requireAuth, taskRoutes);", "<code>/tasks</code> needs a valid token (Member 1's middleware)."],
+    ["api/src/routes/tasks.js", "router.get(\"/\", async (req, res) => {", "<code>GET /tasks?filter=week</code>: check the filter (else 400)."],
+    ["api/src/lib/dates.js", "function todayBangkok(now = new Date()) {", "Today = Bangkok date."],
+    ["api/src/repos/tasks.js", "where = { dueDate: { lte: fromDateStr(addDays(today, 7)) }, done: { none: { userId: me } } };", "Due within 7 days (overdue included) and <b>not done by me</b>."],
+    ["api/src/repos/tasks.js", "orderBy: [{ dueDate: \"asc\" }, { id: \"asc\" }],", "Soonest first."],
+    ["api/src/repos/tasks.js", "function toTaskListItem(t, today) {", "Each row → JSON with <code>days_left</code> and <code>done</code>."],
+    ["api/src/lib/dates.js", "function daysBetween(from, to) {", "<code>days_left</code> = days from today to the due date."],
+    ["api/src/routes/tasks.js", "router.post(\"/:id/done\", async (req, res) => {", "Ticking done inserts a <code>task_done</code> row for me…"],
+    ["api/src/repos/tasks.js", "async function markDone(me, taskId) {", "…once only (upsert), so the count stays right."],
+  ] },
+  { owners: [3], title: "Server: who may edit or delete", steps: [
+    ["api/src/routes/tasks.js", "router.put(\"/:id\", async (req, res) => {", "<code>PUT /tasks/:id</code> arrives with a token."],
+    ["api/src/lib/validate.js", "function parseId(param) {", "<code>:id</code> must be a number (else 404)."],
+    ["api/src/routes/tasks.js", "async function checkOwner(id, req, res) {", "Task missing → <b>404</b>; not created by <code>req.user.id</code> → <b>403</b>."],
+    ["api/src/lib/validate.js", "function validateTask(body, { today, isCreate }) {", "Same rules as the form (title, type, date…) → 400 if wrong."],
+    ["api/src/repos/courses.js", "async function courseExists(id) {", "The course must exist."],
+    ["api/src/repos/tasks.js", "async function updateTask(id, data) {", "UPDATE in the database (done marks are kept)."],
+    ["api/src/routes/tasks.js", "router.delete(\"/:id\", async (req, res) => {", "Delete: same owner check, then…"],
+    ["api/src/repos/tasks.js", "async function deleteTask(id) {", "…DELETE; everyone's done rows go too (CASCADE). Answer 204."],
+  ] },
+);
+
+// ---------------------------------------------------------------- glossary (Flutter/Dart + backend)
 const GLOSSARY = [
   ["StatelessWidget", "A widget that only draws what it's given; it never changes by itself.", "app/lib/widgets/empty_state.dart", "class EmptyState extends StatelessWidget"],
   ["StatefulWidget + State", "A widget with data that can change (loading, typed text, a list). The data lives in its <code>State</code> class.", "app/lib/screens/login_screen.dart", "class _LoginScreenState extends State<LoginScreen> {"],
@@ -378,6 +493,17 @@ const GLOSSARY = [
   ["Null safety: ? ! ??", "<code>String?</code> may be null. <code>x!</code> = \"I'm sure it isn't null\". <code>a ?? b</code> = a, or b if a is null.", "app/lib/screens/task_detail_screen.dart", "_InfoRow(icon: Icons.groups_outlined, text: doneCountText(task.doneCount ?? 0)),"],
   ["Key / ValueKey", "Gives a widget an identity. Changing a <code>ValueKey</code> makes Flutter create a fresh widget (used to reload tabs).", "app/lib/screens/home_screen.dart", "TaskListTab(key: ValueKey('$filter-$_version'), filter: filter, api: _api),"],
   ["material_ui import", "We import <code>package:material_ui/material_ui.dart</code> instead of <code>flutter/material.dart</code>; it provides the same Material widgets (project decision D-36).", "app/lib/main.dart", "import 'package:material_ui/material_ui.dart';"],
+  // backend
+  ["Express app + routes", "<code>express()</code> creates the server; <code>router.get/post/put/delete(path, handler)</code> answers one URL + method.", "api/src/routes/tasks.js", "router.get(\"/:id\", async (req, res) => {"],
+  ["req / res", "<code>req</code> = the request (<code>req.body</code>, <code>req.params.id</code>, <code>req.query.filter</code>); <code>res.status(…).json(…)</code> = the answer.", "api/src/routes/tasks.js", "const filter = req.query.filter ?? \"all\";"],
+  ["Middleware", "A function that runs before routes (<code>req, res, next</code>): cors, JSON parsing, the login check.", "api/src/middleware/auth.js", "function requireAuth(req, res, next) {"],
+  ["REST + HTTP status codes", "200 OK · 201 Created · 204 No Content · 400 bad input · 401 not logged in · 403 not allowed · 404 not found · 409 conflict · 500 server error.", "api/src/routes/tasks.js", "res.status(201).json(await tasks.getTaskDetail(id, { me: req.user.id, today }));"],
+  ["cors", "Lets a web page from another domain (our web app) call the API.", "api/src/index.js", "app.use(cors());"],
+  ["dotenv + .env", "Secrets (database URL, JWT secret) live in <code>api/.env</code>, which is never committed; <code>dotenv</code> loads them into <code>process.env</code>.", "api/src/index.js", "require(\"dotenv\").config({ quiet: true });"],
+  ["JWT (login token)", "A signed string with the user's id. The server can check it without a database lookup.", "api/src/lib/token.js", "function signToken(user) {"],
+  ["bcrypt", "Hashes passwords so the database never stores the real password.", "api/src/routes/auth.js", "const passwordHash = await bcrypt.hash(value.password, BCRYPT_COST);"],
+  ["Prisma (vs mysql2 from class)", "Prisma writes the SQL for us: <code>prisma.task.findMany({ where, orderBy })</code> is a SELECT, <code>create</code> an INSERT. Same idea as the mysql2 queries in class, with Postgres (Neon) instead of MySQL (TiDB).", "api/src/repos/tasks.js", "const tasks = await prisma.task.findMany({"],
+  ["Schema (tables)", "<code>schema.prisma</code> describes the tables, like CREATE TABLE in SQL.", "api/prisma/schema.prisma", "model TaskDone {"],
 ];
 
 // ---------------------------------------------------------------- practice questions
@@ -388,6 +514,9 @@ const QA = {
     ["Where is the login stored? What happens when you close the app?", "In <code>Session</code> (static fields, memory only). Closing the app forgets it, so you log in again."],
     ["Why check <code>mounted</code> after <code>await</code>?", "The user might have left the screen while waiting for the server; using <code>context</code> then would crash."],
     ["What happens if the token expires?", "The API answers 401; <code>showApiError</code> clears the session and sends you to Login with \"Session expired\"."],
+    ["<b>Backend:</b> how does the server know who is calling?", "The app sends <code>Authorization: Bearer &lt;token&gt;</code>. The <code>requireAuth</code> middleware verifies the JWT and sets <code>req.user</code>; routes only trust <code>req.user.id</code>, never an id from the body."],
+    ["<b>Backend:</b> how are passwords stored?", "As a bcrypt hash, never the real password. Login compares the typed password with the hash."],
+    ["<b>Backend:</b> why the same message for wrong password and unknown email?", "So nobody can find out which emails have accounts."],
   ],
   2: [
     ["How do the three tabs work?", "<code>DefaultTabController</code> + <code>TabBar</code> + <code>TabBarView</code>. Each page is the same <code>TaskListTab</code> widget with a different filter (week / all / done)."],
@@ -395,6 +524,9 @@ const QA = {
     ["Who decides \"2 days left\"? The app or the server?", "The server sends <code>days_left</code> (Bangkok date). The app only picks a color and text from it, so every phone agrees."],
     ["Why does the checkbox show a spinner instead of ticking immediately?", "It waits for the server and reloads, so the screen always shows what the server really saved."],
     ["Why not use <code>ListTile</code> for the cards?", "ListTile has a fixed height and cut off the second line when a title wrapped, so we built the row ourselves."],
+    ["<b>Backend:</b> how does the server pick This Week tasks?", "Tasks due on or before today + 7 days (so overdue ones too) that are <b>not</b> in <code>task_done</code> for me, sorted by due date."],
+    ["<b>Backend:</b> how can done be different for each student?", "The <code>task_done</code> table has one row per (user, task). Ticking adds my row; my classmates have their own."],
+    ["<b>Backend:</b> you used Prisma, not mysql2. What is it?", "A library that writes the SQL for us: <code>findMany</code> = SELECT, <code>create</code> = INSERT. Same REST + database idea as class, with Postgres instead of MySQL."],
   ],
   3: [
     ["How does the detail screen know which task to show?", "The list passes only the task <b>id</b>; the detail screen loads the full task with <code>GET /tasks/:id</code>."],
@@ -402,6 +534,9 @@ const QA = {
     ["How is one form used for both Add and Edit?", "<code>existing</code> is null for Add; for Edit it's the task, so the fields are pre-filled and Save calls PUT instead of POST."],
     ["Why can't other people edit my task?", "The app hides Edit/Delete when <code>is_owner</code> is false, and the server also refuses with 403. The server is the real rule."],
     ["Why can't I pick a past date?", "The date picker starts at today (Bangkok time) and the validator and server reject past dates for new tasks."],
+    ["<b>Backend:</b> what is the difference between 403 and 404?", "404 = the task doesn't exist. 403 = it exists but you didn't create it, so you may not change it. <code>checkOwner</code> checks 404 first, then 403."],
+    ["<b>Backend:</b> which HTTP methods does your part use?", "GET /tasks/:id (read), POST /tasks (create → 201), PUT /tasks/:id (update), DELETE /tasks/:id (delete → 204): the four CRUD operations."],
+    ["<b>Backend:</b> what happens to done marks when a task is deleted?", "They're deleted too: the database removes the task_done rows automatically (ON DELETE CASCADE)."],
   ],
 };
 
@@ -528,14 +663,16 @@ function flowsHtml() {
 function membersHtml() {
   const shots = { 1: ["s2-login-light.png", "s3-register-light.png"], 2: ["s4-home-week-light.png", "s4-home-all-light.png"], 3: ["s5-detail-light.png", "s6-form-light.png"] };
   return [1, 2, 3, "s"].map((m) => {
+    const isApp = (f) => f.path.startsWith("app/");
     const mine = FILES.filter((f) => f.owners[0] === m);
     const also = FILES.filter((f) => f.owners[0] !== m && f.owners.includes(m));
     const li = (f) => `<li><a href="#${fileId(f.path)}">${esc(f.path)}</a></li>`;
+    const list = (title, fs_) => (fs_.length ? `<h4>${title}</h4><ul>${fs_.map(li).join("")}</ul>` : "");
     return `<div class="member m${m}" data-owners="${m}">
   <h3>${badge(m)} ${esc(MEMBERS[m].name)}: ${esc(MEMBERS[m].part)}</h3>
   <p>${esc(MEMBERS[m].desc)}</p>
-  <div class="mcols"><div><h4>Main files</h4><ul>${mine.map(li).join("")}</ul>
-  ${also.length ? `<h4>Also uses</h4><ul>${also.map(li).join("")}</ul>` : ""}</div>
+  <div class="mcols"><div>${list("Flutter app: main files", mine.filter(isApp))}${list("Backend: main files", mine.filter((f) => !isApp(f)))}
+  ${list("Also uses (shared with another member)", also)}</div>
   ${shots[m] ? `<div class="shots">${shots[m].map((s) => `<img src="screenshots/${s}" alt="${esc(s)}" loading="lazy">`).join("")}</div>` : ""}</div>
 </div>`;
   }).join("");
@@ -561,12 +698,12 @@ const apiRoutes = [
 ];
 
 // ---------------------------------------------------------------- page
-const groups = [
-  ["Member 1: Getting in", FILES.filter((f) => f.owners[0] === 1)],
-  ["Member 2: Seeing tasks", FILES.filter((f) => f.owners[0] === 2)],
-  ["Member 3: Managing tasks", FILES.filter((f) => f.owners[0] === 3)],
-  ["Shared: server + setup", FILES.filter((f) => f.owners[0] === "s")],
-];
+const groups = [];
+for (const m of [1, 2, 3]) {
+  groups.push([`${MEMBERS[m].name}: ${MEMBERS[m].part} · Flutter app`, FILES.filter((f) => f.owners[0] === m && f.path.startsWith("app/"))]);
+  groups.push([`${MEMBERS[m].name}: ${MEMBERS[m].part} · Backend (api/)`, FILES.filter((f) => f.owners[0] === m && f.path.startsWith("api/"))]);
+}
+groups.push(["Shared setup", FILES.filter((f) => f.owners[0] === "s")]);
 const totalLines = FILES.reduce((s, f) => s + lines[f.path].length, 0);
 
 const html = `<!doctype html>
@@ -649,13 +786,13 @@ th,td{text-align:left;padding:7px 12px;border-bottom:1px solid var(--line)}th{co
 <nav>
   <div class="toc"><h2>Sections</h2>
     <a href="#start">Start here</a><a href="#big">How it fits together</a><a href="#members">Who owns what</a><a href="#flows">Step-by-step flows</a>
-    <a href="#files">Every file + code</a><a href="#api">API routes</a><a href="#gloss">Flutter words</a><a href="#qa">Practice questions</a></div>
+    <a href="#files">Every file + code</a><a href="#api">API routes</a><a href="#gloss">Flutter + backend words</a><a href="#qa">Practice questions</a></div>
   <div><h2>Project folder</h2>${tree()}</div>
 </nav>
 <main>
 <section id="start"><h2>Start here</h2>
 <p class="lead">DueSoon is a shared deadline board for one class: anyone adds an assignment, quiz or exam, everyone sees it sorted by due date, each student ticks off their own work and sees how many classmates finished.
-This page explains every part of the code. Pick your part with the buttons at the top, or keep <b>Whole project</b>.</p>
+This page explains every part of the code. Each member owns one feature <b>from the screen to the database</b>: their Flutter screens and the server code behind them. Pick your part with the buttons at the top, or keep <b>Whole project</b>.</p>
 <div class="howto"><b>How to use this page.</b> Every file shows its path exactly as in the project folder (open it in VS Code with <code>Ctrl+P</code> and type the file name).
 Blue <b>line N</b> links jump to that line in the code below and highlight it. Read the <a href="#flows">flows</a> first: they follow one action (e.g. logging in) through the files in order.
 Generated from the real source (${FILES.length} files, ${totalLines} lines) on ${new Date().toISOString().slice(0, 10)} by <code>node docs/tools/build-code-guide.js</code>.</div>
@@ -681,15 +818,16 @@ Generated from the real source (${FILES.length} files, ${totalLines} lines) on $
   <div class="card"><h3>Login token</h3><p>After login the server gives a token. <code>Session</code> keeps it; <code>ApiService</code> sends it with every request so the server knows who you are.</p></div>
   <div class="card"><h3>Server is the rule</h3><p>The app checks forms to give quick messages, but the server checks everything again (past dates, who may edit).</p></div>
   <div class="card"><h3>days_left comes from the server</h3><p>"Today" is the Bangkok date on the server, so every phone shows the same "2 days left". The app only picks colors and words.</p></div>
+  <div class="card"><h3>Prisma instead of mysql2</h3><p>Class used Express + mysql2 + MySQL (TiDB). We use Express + <b>Prisma</b> + Postgres (Neon): Prisma writes the SQL for us. Routes, REST and JSON work the same way.</p></div>
   <div class="card"><h3>Refresh after changes</h3><p>A screen that changed something closes with <code>Navigator.pop(context, true)</code>; the screen below reloads its list.</p></div>
 </div>
 </section>
 
-<section id="members"><h2>Who owns what</h2><p class="lead">Same split as <code>docs/TEAM.md</code>. "Also uses" = files you share with someone else.</p>${membersHtml()}</section>
+<section id="members"><h2>Who owns what</h2><p class="lead">Same split as <code>docs/TEAM.md</code>: each member owns their screens <b>and</b> the API routes and database code behind them. "Also uses" = files shared with another member.</p>${membersHtml()}</section>
 
 <section id="flows"><h2>Step-by-step flows</h2><p class="lead">Each flow follows one user action through the code, in order. Click a <code>file : line</code> link to see that exact line.</p>${flowsHtml()}</section>
 
-<section id="files"><h2>Every file + code</h2><p class="lead">What each file does, its important lines, and the full code (click <b>Show code</b>).</p>
+<section id="files"><h2>Every file + code</h2><p class="lead">What each file does, its important lines, and the full code (click <b>Show code</b>). Files are grouped by their <b>main</b> owner; with a member button on, you also see the files that member shares with others under the other member's heading.</p>
 ${groups.map(([title, fs_]) => `<div class="fgroup" data-owners="${ownersAttr([...new Set(fs_.flatMap((f) => f.owners))])}"><h3 class="group-title">${esc(title)}</h3>${fs_.map(fileCard).join("")}</div>`).join("")}
 <div class="file" data-owners="s" data-search="tests test flutter test"><header><div class="fpath"><b>Tests</b></div></header><p class="what">Automatic checks (not needed for the presentation): ${TESTS.map((t) => `<code>${esc(t)}</code>`).join(" ")}. Run with <code>flutter test</code> in <code>app/</code>.</p></div>
 </section>
@@ -699,7 +837,7 @@ ${groups.map(([title, fs_]) => `<div class="fgroup" data-owners="${ownersAttr([.
 ${apiRoutes.map(([m, p, w, o]) => `<tr data-owners="${o} s"><td><code>${esc(m)}</code></td><td><code>${esc(p)}</code></td><td>${esc(w)}</td><td>${badge(o)}</td></tr>`).join("")}
 </tbody></table></section>
 
-<section id="gloss"><h2>Flutter words used in this project</h2><p class="lead">Each one links to a real example in our code.</p>${glossaryHtml()}</section>
+<section id="gloss"><h2>Flutter + backend words used in this project</h2><p class="lead">Each one links to a real example in our code.</p>${glossaryHtml()}</section>
 
 <section id="qa"><h2>Practice questions</h2><p class="lead">Questions a teacher might ask about each part. Try to answer before opening.</p>${qaHtml()}</section>
 </main></div>
