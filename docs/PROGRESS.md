@@ -8,6 +8,7 @@
 - Owner review of [Default] decisions in SPEC §2 (D-10, D-13, D-19, D-22, D-35…D-38)
 
 ## Log (newest first)
+- **2026-11-26**: Wrote `docs/TEAM.md`: 3-member split by app part (accounts / home + lists / detail + CRUD); owner: focus on the parts taught in class.
 - **2026-11-26**: Git allowed now (D-26 changed): root `.gitignore`, private GitHub repo, deploys stay manual. Secret check before first commit: `.env.example` has placeholders only (compared against `.env` without printing).
 - **2026-11-26**: **Step 9 done.** Web build on Vercel (`duesoon-web`, D-49). Full web check in Chrome vs live API: no CORS/console errors. Fixed type chip read as a checkbox by screen readers (`TypeChip`, +1 test → 65). Web redeployed + APK rebuilt. My test slip (clicked the same spot twice, marked Lab 6 done) undone and verified on the server.
 - **2026-11-26**: **Step 8 done.** Owner: in-memory login stays (O-03), emulator + APK backup (O-04), hand-made icon, no slides (D-48). Adaptive launcher icon + web icons/title; API reply-shape guard (+1 test → 64). Full re-run: api 31 + 25 tests, db:check = seed, analyze 0, flutter 64. Release APK installed, 14 screenshots in `docs/screenshots/`. Wrote README.md + docs/DEMO.md.
