@@ -11,10 +11,10 @@ const OUT = path.join(ROOT, "docs", "code-guide.html");
 
 // ---------------------------------------------------------------- members
 const MEMBERS = {
-  1: { name: "Member 1", part: "Getting in", short: "Accounts", desc: "App: Splash, Login, Register, Logout, session, form checks. Server: /register, /login, /me, the token check (middleware), JWT, password hashing, users table." },
-  2: { name: "Member 2", part: "Seeing tasks", short: "Lists", desc: "App: Home tabs, task cards, done checkbox, loading data with http. Server: GET /tasks, POST/DELETE /tasks/:id/done, the list query, Bangkok \"today\" and days_left, the database tables." },
-  3: { name: "Member 3", part: "Managing tasks", short: "CRUD", desc: "App: task detail, add / edit form, delete. Server: GET/POST/PUT/DELETE /tasks/:id, the owner check (404 then 403), task validation, /courses." },
-  s: { name: "Shared", part: "Setup", short: "Shared", desc: "index.js (the Express app), db.js (database connection), dev.js, seed, Flutter/Android config. Everyone should know index.js; Member 2 can explain the rest in a minute." },
+  1: { name: "Member 1", part: "Getting in", short: "Accounts", desc: "App: Splash, Login, Register, Logout, session, form checks. Server: /register, /login, /me, the token check (middleware), JWT, password hashing, users table. Project-wide: running + deploying, secrets (.env), web version / APK / Git." },
+  2: { name: "Member 2", part: "Seeing tasks", short: "Lists", desc: "App: Home tabs, task cards, done checkbox, loading data with http. Server: GET /tasks, POST/DELETE /tasks/:id/done, the list query, Bangkok \"today\" and days_left, the database tables. Project-wide: setup files (index.js, db.js, Prisma config, seed), why Neon + Prisma." },
+  3: { name: "Member 3", part: "Managing tasks", short: "CRUD", desc: "App: task detail, add / edit form, delete. Server: GET/POST/PUT/DELETE /tasks/:id, the owner check (404 then 403), task validation, /courses. Project-wide: overall design (why an API), REST design, testing." },
+  s: { name: "Shared", part: "Setup", short: "Shared", desc: "index.js (the Express app), db.js + prisma.config.js (database), dev.js, seed, check-db, package.json, Flutter/Android config. Member 2 explains these; everyone should know index.js." },
 };
 
 // ---------------------------------------------------------------- files
@@ -323,30 +323,83 @@ const FILES = [
       { find: "async function courseExists(id) {", note: "Used before saving a task (bad course → 400)" },
     ] },
 
-  // ===== Shared setup
-  { path: "api/src/index.js", owners: ["s"], what: "<b>The server app</b> (everyone should know this one). Creates Express, adds <code>cors</code> and JSON parsing, mounts each member's routes, and turns unknown routes and crashes into JSON errors. Vercel runs this file.",
+  // ===== Shared setup (explained by Member 2; everyone should know index.js)
+  { path: "api/src/index.js", owners: ["s", 2], what: "<b>The server app</b> (everyone should know this one; Member 2 explains it). Creates Express, adds <code>cors</code> and JSON parsing, mounts each member's routes, and turns unknown routes and crashes into JSON errors. Vercel runs this file.",
     keys: [
       { find: "require(\"dotenv\").config({ quiet: true });", note: "dotenv: load secrets from <code>.env</code>" },
       { find: "const app = express();", note: "Create the Express app" },
       { find: "app.use(cors());", note: "cors: allow the web app (another domain) to call the API" },
-      { find: "app.use(express.json({ limit: \"100kb\" }));", note: "Parse JSON bodies into <code>req.body</code>" },
-      { find: "app.use(authRoutes);", note: "<b>Member 1</b>'s routes" },
-      { find: "app.use(\"/courses\", requireAuth, courseRoutes);", note: "<b>Member 3</b>: /courses (login required)" },
+      { find: "app.use(express.json({ limit: \"100kb\" }));", note: "Parse JSON bodies into <code>req.body</code> (max 100 KB)" },
+      { find: "app.get(\"/\", (req, res) => res.json({ status: \"ok\" }));", note: "Health check: open the API URL in a browser → <code>{\"status\":\"ok\"}</code>" },
+      { find: "app.use(authRoutes);", note: "<b>Member 1</b>'s routes (no login needed)" },
+      { find: "app.use(\"/courses\", requireAuth, courseRoutes);", note: "<b>Member 3</b>: /courses; <code>requireAuth</code> runs first" },
       { find: "app.use(\"/tasks\", requireAuth, taskRoutes);", note: "<b>Members 2 + 3</b>: /tasks (login required)" },
-      { find: "app.use((req, res) => res.status(404).json({ error: \"Not found\" }));", note: "Unknown URL → JSON 404" },
-      { find: "app.use((err, req, res, next) => {", note: "Any crash → 500 \"Something went wrong\"" },
+      { find: "app.use((req, res) => res.status(404).json({ error: \"Not found\" }));", note: "Order matters: this runs only if no route above matched → JSON 404" },
+      { find: "app.use((err, req, res, next) => {", note: "Error handler (4 arguments): any crash → 500 \"Something went wrong\", details only in the server log" },
       { find: "module.exports = app;", note: "Export for Vercel (no <code>app.listen</code> here)" },
     ] },
-  { path: "api/src/dev.js", owners: ["s"], what: "Runs the server on your PC: <code>npm run dev</code> → http://localhost:3000.", keys: [{ find: "app.listen(", note: "<code>app.listen</code> only for local dev" }] },
-  { path: "api/src/db.js", owners: ["s"], what: "Creates the one Prisma client that talks to the Neon Postgres database (like creating the mysql2 connection in class). The database URL comes from <code>.env</code>.",
+  { path: "api/src/dev.js", owners: ["s", 2], what: "Runs the server on your PC: <code>npm run dev</code> → http://localhost:3000. Vercel doesn't use this file; it imports <code>index.js</code> directly.",
+    keys: [{ find: "app.listen(", note: "<code>app.listen</code> only for local dev" }] },
+  { path: "api/src/db.js", owners: ["s", 2], what: "Creates the one Prisma client that talks to the Neon Postgres database (like creating the mysql2 connection in class). Uses the <b>pooled</b> URL from <code>.env</code>, which suits many short requests.",
     keys: [
-      { find: "const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });", note: "Connect using <code>DATABASE_URL</code> from .env" },
+      { find: "if (!process.env.DATABASE_URL) {", note: "Fail early with a clear message if <code>.env</code> is missing" },
+      { find: "const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });", note: "Connect with <code>DATABASE_URL</code> (pooled, host contains <code>-pooler</code>)" },
       { find: "log: process.env.PRISMA_LOG ? [\"query\"] : [],", note: "<code>PRISMA_LOG=1 npm run dev</code> prints the SQL Prisma writes" },
     ] },
-  { path: "api/prisma/seed.js", owners: ["s"], what: "Fills the database with demo users and tasks (dates relative to today). Run with <code>npx prisma db seed</code> before a demo.", keys: [] },
-  { path: "app/pubspec.yaml", owners: ["s"], lang: "yaml", what: "Flutter project settings: app name, Dart version, packages (<code>http</code>, <code>material_ui</code>).", keys: [] },
-  { path: "app/android/app/src/main/AndroidManifest.xml", owners: ["s"], lang: "xml", what: "Android settings: app label \"DueSoon\" and the INTERNET permission (needed to reach the API).",
-    keys: [{ find: "android.permission.INTERNET", note: "Without this, release builds can't call the API" }] },
+  { path: "api/prisma.config.js", owners: ["s", 2], what: "Settings for Prisma's command-line tools (<code>prisma db push</code>, <code>prisma db seed</code>). They use the <b>direct</b> (unpooled) Neon URL, because creating tables needs a direct connection; the app itself uses the pooled one (<code>db.js</code>).",
+    keys: [
+      { find: "schema: \"prisma/schema.prisma\",", note: "Where the tables are described" },
+      { find: "seed: \"node prisma/seed.js\",", note: "What <code>npx prisma db seed</code> runs" },
+      { find: "datasource: { url: process.env.DATABASE_URL_UNPOOLED },", note: "Direct URL for the tools (two URLs: pooled for the app, direct for the CLI)" },
+    ] },
+  { path: "api/prisma/seed.js", owners: ["s", 2], what: "Fills the database with demo users and tasks, with dates <b>relative to today</b>, so every group (Overdue, Today…) always has tasks. Deletes everything first. Run with <code>npx prisma db seed</code> before a demo.",
+    keys: [
+      { find: "const DEMO_PASSWORD = \"demo1234\";", note: "Password for all demo accounts" },
+      { find: "const USERS = [", note: "Mai, Ploy, Ton, Beam" },
+      { find: "const TASKS = [", note: "<code>offset</code> = days from today; <code>doneBy</code> = who already finished it" },
+    ] },
+  { path: "api/scripts/check-db.js", owners: ["s", 2], what: "A quick check that the database and the two key queries work (<code>npm run db:check</code>): the task list with Mai's done flag, and the done count per task. With <code>PRISMA_LOG=1</code> it prints the SQL, which is useful to show that Prisma writes a real <code>LEFT JOIN … COUNT</code>.",
+    keys: [
+      { find: "const tasks = await prisma.task.findMany({", note: "Query 1: the task list with my done flag" },
+      { find: "select: { id: true, title: true, _count: { select: { done: true } } },", note: "Query 2: COUNT of task_done per task" },
+    ] },
+  { path: "api/package.json", owners: ["s", 2], lang: "json", what: "The API's npm settings: Node 24, the scripts (<code>npm run dev</code>, <code>npm test</code>, <code>db:check</code>…) and the packages (express, cors, dotenv, prisma, jsonwebtoken, bcryptjs).",
+    keys: [
+      { find: "\"dev\": \"node --watch src/dev.js\",", note: "<code>npm run dev</code>: restart on every save" },
+      { find: "\"postinstall\": \"prisma generate\",", note: "After <code>npm install</code> (also on Vercel), generate the Prisma client" },
+      { find: "\"dependencies\": {", note: "The packages the API uses" },
+    ] },
+  { path: "app/pubspec.yaml", owners: ["s", 2], lang: "yaml", what: "Flutter project settings: app name, Dart version, packages (<code>http</code>, <code>material_ui</code>).",
+    keys: [
+      { find: "material_ui:", note: "Material widgets package (D-36)" },
+      { find: "http:", note: "The http package (API calls)" },
+    ] },
+  { path: "app/android/app/src/main/AndroidManifest.xml", owners: ["s", 2], lang: "xml", what: "Android settings: app label \"DueSoon\" and the INTERNET permission (needed to reach the API).",
+    keys: [
+      { find: "android.permission.INTERNET", note: "Without this, release builds can't call the API" },
+      { find: "android:label=\"DueSoon\"", note: "Name under the app icon" },
+    ] },
+  { path: "app/android/app/build.gradle.kts", owners: ["s", 2], lang: "js", what: "Android build settings: app id <code>com.duesoon.duesoon</code>, SDK versions from Flutter, and the NDK version pinned to the one already installed (D-44). Release builds are signed with the debug key, fine for a class APK.",
+    keys: [
+      { find: "ndkVersion = \"30.0.16138531\"", note: "Pinned NDK (avoids a 2 GB download)" },
+      { find: "applicationId = \"com.duesoon.duesoon\"", note: "The app's unique id on Android" },
+      { find: "signingConfig = signingConfigs.getByName(\"debug\")", note: "Release APK signed with the debug key (not for the Play Store)" },
+    ] },
+];
+
+// Project-wide questions (not tied to one screen). owner = who answers in class.
+const PROJECT_QA = [
+  [1, "How do you run the project?", "API: in <code>api/</code> run <code>npm install</code>, copy <code>.env.example</code> to <code>.env</code> and fill it in, <code>npx prisma db push</code>, <code>npx prisma db seed</code>, <code>npm run dev</code> (http://localhost:3000). App: in <code>app/</code> run <code>flutter run</code>; it uses the live API by default."],
+  [1, "How is the API deployed?", "With the Vercel CLI: <code>vercel --prod</code> in <code>api/</code>. Vercel runs <code>npm install</code> (which generates the Prisma client) and serves <code>src/index.js</code>. Live at https://duesoon-api.vercel.app. Pushing to GitHub does not deploy."],
+  [1, "Where are the secrets? Why aren't they on GitHub?", "In <code>api/.env</code> (database URLs, JWT secret), loaded by <code>dotenv</code>. <code>.gitignore</code> keeps <code>.env</code> out of git and <code>.vercelignore</code> keeps it out of uploads; on Vercel the same values are set in the project settings. <code>.env.example</code> lists the names without values."],
+  [1, "What else did you build besides the Android app?", "A web version (the same Flutter code, <code>flutter build web</code>, hosted on Vercel: needs <code>cors</code> on the API), a release APK (<code>flutter build apk --release</code>), a custom app icon, and a public GitHub repo with docs."],
+  [2, "Why Neon Postgres + Prisma instead of TiDB + mysql2 from class?", "Prisma writes the SQL for us and checks the table/column names, and Neon is a free cloud Postgres that works well with Vercel. The idea is the same as class: Express routes call database queries; only the query style changes (<code>prisma.task.findMany</code> instead of <code>pool.query('SELECT …')</code>)."],
+  [2, "How were the tables created?", "They are described in <code>prisma/schema.prisma</code>; <code>npx prisma db push</code> creates them in Neon. <code>npx prisma db seed</code> adds demo data and <code>npx prisma studio</code> shows the data in a browser (like DBeaver)."],
+  [2, "Why two database URLs?", "The app uses Neon's <b>pooled</b> URL (many short connections from Vercel); Prisma's tools (db push, seed) use the <b>direct</b> URL, which they need to change tables."],
+  [2, "What does index.js do, and why does the order of app.use matter?", "It builds the Express app: cors → JSON parsing → routes (with the login check before /tasks and /courses) → JSON 404 → error handler. Express runs them top to bottom, so the 404 must come after all routes."],
+  [3, "Why does the app talk to an API instead of the database directly?", "The database password would be inside the app, and anyone can extract it from an APK. The API also enforces the rules in one place (who may edit, valid dates), for both the Android and web versions."],
+  [3, "How did you design the REST API?", "Resources as URLs (<code>/tasks</code>, <code>/tasks/:id</code>, <code>/tasks/:id/done</code>), HTTP methods for CRUD (GET read, POST create, PUT update, DELETE delete), JSON bodies, and status codes for results (201, 204, 400, 401, 403, 404, 409)."],
+  [3, "How do you know it works? Did you test it?", "65 Flutter tests (form checks, the API client with a fake server, screens), 31 server unit tests (dates, validation, tokens), 25 API tests that call the real server and database (e.g. another user gets 403), <code>flutter analyze</code>, and full runs on the emulator and in Chrome."],
 ];
 
 const TESTS = [
@@ -590,7 +643,7 @@ function highlight(code, lang) {
   return res.map((r) => r.join(""));
 }
 
-const langOf = (f) => f.lang || (f.path.endsWith(".dart") ? "dart" : "js");
+const langOf = (f) => (f.lang === "json" ? "js" : f.lang) || (f.path.endsWith(".dart") ? "dart" : "js");
 
 // ---------------------------------------------------------------- folder tree
 function tree() {
@@ -786,7 +839,7 @@ th,td{text-align:left;padding:7px 12px;border-bottom:1px solid var(--line)}th{co
 <nav>
   <div class="toc"><h2>Sections</h2>
     <a href="#start">Start here</a><a href="#big">How it fits together</a><a href="#members">Who owns what</a><a href="#flows">Step-by-step flows</a>
-    <a href="#files">Every file + code</a><a href="#api">API routes</a><a href="#gloss">Flutter + backend words</a><a href="#qa">Practice questions</a></div>
+    <a href="#files">Every file + code</a><a href="#api">API routes</a><a href="#gloss">Flutter + backend words</a><a href="#qa">Practice questions</a><a href="#project-qa">Project-wide questions</a></div>
   <div><h2>Project folder</h2>${tree()}</div>
 </nav>
 <main>
@@ -838,6 +891,9 @@ ${apiRoutes.map(([m, p, w, o]) => `<tr data-owners="${o} s"><td><code>${esc(m)}<
 </tbody></table></section>
 
 <section id="gloss"><h2>Flutter + backend words used in this project</h2><p class="lead">Each one links to a real example in our code.</p>${glossaryHtml()}</section>
+
+<section id="project-qa"><h2>Project-wide questions</h2><p class="lead">Questions about the whole project rather than one screen. Each has a member who answers it in class.</p>
+${[1, 2, 3].map((m) => `<div class="qa" data-owners="${m}"><h3>${badge(m)} answered by ${esc(MEMBERS[m].name)}</h3>${PROJECT_QA.filter(([o]) => o === m).map(([, q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join("")}</div>`).join("")}</section>
 
 <section id="qa"><h2>Practice questions</h2><p class="lead">Questions a teacher might ask about each part. Try to answer before opening.</p>${qaHtml()}</section>
 </main></div>

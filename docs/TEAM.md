@@ -26,9 +26,12 @@ with line links, and practice questions.
 - **Backend:** `GET/POST/PUT/DELETE /tasks/:id` in `api/src/routes/tasks.js` (incl. `checkOwner`: 404 then 403), `validateTask` in `api/src/lib/validate.js`, `api/src/routes/courses.js` + `api/src/repos/courses.js`, create/update/delete in `api/src/repos/tasks.js`
 - **Demo:** open a task, add one, edit it, delete it; show that another user sees no Edit/Delete and that the server refuses with 403
 
-## Shared setup (everyone knows `index.js`; Member 2 explains the rest in a minute)
-`api/src/index.js` (Express app: cors, JSON, routes), `api/src/db.js` (database connection), `api/src/dev.js`,
-`api/prisma/seed.js` (demo data), Vercel deploy, `app/pubspec.yaml`, Android manifest. Tests and the web version are done; no owner needed.
+## Project-wide topics (not tied to one screen)
+Answers for each are in the guide's **Project-wide questions** section.
+- **Member 1:** how to run the project (`npm run dev`, `flutter run`), deploying the API to Vercel, secrets (`.env`, `.gitignore`), the extras (web version, release APK, app icon, GitHub).
+- **Member 2:** the setup files: `api/src/index.js` (Express app: cors, JSON, route order, 404/500), `api/src/db.js` + `api/prisma.config.js` (pooled vs direct database URL), `api/prisma/seed.js`, `api/scripts/check-db.js`, `api/package.json`, `app/pubspec.yaml`, the Android manifest and `build.gradle.kts`. Also: why Neon + Prisma instead of TiDB + mysql2, and how the tables were created (`prisma db push`).
+- **Member 3:** the overall design (why the app calls an API instead of the database), the REST design (URLs, methods, status codes), and testing ("how do you know it works?").
+- **Everyone** should still be able to explain `api/src/index.js` in one sentence.
 
 ## Good to know (everyone)
 - **Prisma instead of mysql2:** class used Express + mysql2 + MySQL (TiDB); we use Express + Prisma + Postgres (Neon). Be ready to say: "Prisma writes the SQL for us, the same way we wrote queries with mysql2" (`findMany` = SELECT, `create` = INSERT).
