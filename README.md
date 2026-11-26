@@ -13,6 +13,8 @@ finished. Built for CSC452 Mobile Programming.
 
 More in [`docs/screenshots/`](docs/screenshots/) (splash, login, register; light + dark).
 
+**Learning the code:** open [`docs/code-guide.html`](docs/code-guide.html) in a browser (download it or clone the repo; GitHub shows HTML as text). It explains every file with its full code, step-by-step flows with line links, and a filter per team member ([`docs/TEAM.md`](docs/TEAM.md)).
+
 ## Features
 - Register / log in (JWT; passwords hashed with bcrypt)
 - Three tabs: **This Week** (overdue + next 7 days), **All**, **Done**, grouped Overdue / Today / Tomorrow / This week / Later with urgency colors

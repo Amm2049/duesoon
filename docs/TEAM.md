@@ -25,6 +25,7 @@ In the demo: "the app talks to our Express API on Vercel, data is in a Postgres 
 ## Good to know (everyone)
 - Live API: https://duesoon-api.vercel.app · Web version: https://duesoon-web-phi.vercel.app
 - Demo accounts: `mai@duesoon.test`, `ploy@duesoon.test`, `ton@duesoon.test`, `beam@duesoon.test`, password `demo1234`
+- **Learn your part:** open [`code-guide.html`](code-guide.html) in a browser and press your member button (or add `?member=1`, `2` or `3` to the address).
 - Full demo script: [`DEMO.md`](DEMO.md). Run the app: see the [README](../README.md).
 - We import `package:material_ui/material_ui.dart` instead of `flutter/material.dart` (SPEC D-36).
 - All three of us share one database: adding or deleting tasks changes what everyone sees.
