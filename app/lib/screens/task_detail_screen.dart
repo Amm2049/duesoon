@@ -25,6 +25,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   Task? _task;
   bool _busy = false; // done toggle or delete running
   bool _changed = false;
+  bool _closing = false;
+  Future<void>? _request; // the running done toggle or delete
 
   @override
   void initState() {
@@ -32,7 +34,22 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     _load();
   }
 
-  void _close() => Navigator.pop(context, _changed);
+  /// Remembers a running request so [_close] can wait for it.
+  void _track(Future<void> request) => _request = request;
+
+  /// Back to the list, reporting `_changed`. If a request is still running,
+  /// wait for the server first: otherwise the list would not reload, or would
+  /// reload before the change is saved (back pressed while the spinner shows).
+  Future<void> _close() async {
+    if (_closing) return; // back pressed twice
+    _closing = true;
+    try {
+      await _request;
+    } catch (_) {
+      // Errors were already shown by the request itself.
+    }
+    if (mounted) Navigator.pop(context, _changed);
+  }
 
   /// 404/403 on a task: tell the user and go back to a refreshed list.
   bool _handleGone(ApiException e) {
@@ -142,7 +159,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 key: const Key('delete-task'),
                 tooltip: 'Delete',
                 icon: const Icon(Icons.delete_outline),
-                onPressed: _busy ? null : _delete,
+                onPressed: _busy ? null : () => _track(_delete()),
               ),
             ],
           ],
@@ -201,6 +218,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   }
 
   Widget _doneButton(Task task) {
+    void onPressed() => _track(_toggleDone());
     final child = _busy
         ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
         : Text(task.done ? 'Mark as not done' : 'Mark as done');
@@ -210,13 +228,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       child: task.done
           ? OutlinedButton.icon(
               key: const Key('toggle-done'),
-              onPressed: _busy ? null : _toggleDone,
+              onPressed: _busy ? null : onPressed,
               icon: const Icon(Icons.undo),
               label: child,
             )
           : FilledButton.icon(
               key: const Key('toggle-done'),
-              onPressed: _busy ? null : _toggleDone,
+              onPressed: _busy ? null : onPressed,
               icon: const Icon(Icons.check),
               label: child,
             ),

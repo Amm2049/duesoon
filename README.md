@@ -75,7 +75,7 @@ Full contract: SPEC §4.
 |---|---|---|
 | `api/` | `npm test` | 31 unit tests (dates, validation), no DB |
 | `api/` | `npm run test:api` | 25 HTTP tests against the real DB (cleans up its `apitest-*` users) |
-| `app/` | `flutter test` | 65 unit + widget tests (validators, API client with a mock server, screens) |
+| `app/` | `flutter test` | 69 unit + widget tests (validators, API client with a mock server, screens) |
 | `app/` | `flutter analyze` | lint / type check |
 
 ## Folders

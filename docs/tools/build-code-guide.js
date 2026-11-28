@@ -191,7 +191,7 @@ const FILES = [
     keys: [
       { find: "final int taskId;", note: "The list passes only the <b>id</b>; this screen loads the rest" },
       { find: "bool _changed = false;", note: "Remember if anything changed, to tell the list" },
-      { find: "void _close() => Navigator.pop(context, _changed);", note: "Go back <b>with a result</b>" },
+      { find: "Future<void> _close() async {", note: "Go back <b>with a result</b>; waits first if a request is still running (D-50)" },
       { find: "bool _handleGone(ApiException e) {", note: "Task deleted by someone else (404) → message + back" },
       { find: "Future<void> _load() async {", note: "GET /tasks/:id" },
       { find: "Future<void> _toggleDone() async {", note: "Mark as done / not done, then reload" },
@@ -476,7 +476,7 @@ const FLOWS = [
     ["api/src/routes/tasks.js", "async function checkOwner(id, req, res) {", "Server: 404 if gone, 403 if you're not the creator."],
     ["app/lib/screens/task_detail_screen.dart", "Future<void> _delete() async {", "Delete asks first (AlertDialog)…"],
     ["app/lib/services/api_service.dart", "Future<void> deleteTask(int id) async {", "…then <code>DELETE /tasks/:id</code>."],
-    ["app/lib/screens/task_detail_screen.dart", "void _close() => Navigator.pop(context, _changed);", "Back to a refreshed list."],
+    ["app/lib/screens/task_detail_screen.dart", "Future<void> _close() async {", "Back to a refreshed list. If Mark as done / Delete is still running, it waits for the server first (D-50)."],
   ] },
 ];
 
