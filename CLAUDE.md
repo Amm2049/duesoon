@@ -29,6 +29,7 @@ Tick `PLAN.md`, add a dated line to `PROGRESS.md`, log decisions in `SPEC.md` §
 | app/ | `flutter build apk --release` | release APK → `build/app/outputs/flutter-apk/app-release.apk` (demo backup, D-48) |
 | app/ | `flutter build web --release` then in `build/web/`: `vercel --prod` | deploy web → https://duesoon-web-phi.vercel.app. After `flutter clean`: `vercel link --yes --project duesoon-web` + recreate `.vercelignore` (`.env*`, `.gitignore`, `*.map`) first (D-49) |
 | root | `node docs/tools/build-code-guide.js` | rebuild `docs/code-guide.html` after code changes (stops with an error if a line reference no longer matches). Pushing `docs/` to `main` republishes it on GitHub Pages: https://amm2049.github.io/duesoon/code-guide.html |
+| root | `node docs/tools/build-member2-guide.js` | rebuild `docs/member2-guide.html` (Billy's line-by-line guide). Uses fixed line ranges: after editing Member 2 files, check the ranges in the script still point at the right code |
 | app/ | `flutter test` | unit/widget tests |
 | app/ | `flutter analyze` | lint/type check |
 

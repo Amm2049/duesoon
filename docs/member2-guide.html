@@ -1,0 +1,1705 @@
+<title>DueSoon Member 2 Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* Layout: sticky contents rail on the left, one calm reading column (~74ch) on the right. */
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --fg:#1c2230; --muted:#5d6676; --line:#e1e5eb; --accent:#2b57c9;
+  --code-bg:#f3f5f9; --code-fg:#283041; --gutter:#a3abba;
+  --red:#d32f2f; --orange:#ef6c00; --green:#388e3c;
+  --k-s:#7a4fc9; --k-l:#2b6fd6; --k-c:#1d8a6b; --k-i:#c25a00; --k-r:#b6336d; --k-h:#687183;
+  --t-kw:#8a3fc2; --t-str:#1f7a4d; --t-com:#8a93a3; --t-num:#b4530d; --t-title:#2457c5; --t-type:#0f7c8c;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-head:"Space Grotesk","Inter",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"Cascadia Code",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121519; --surface:#191d23; --fg:#e3e7ee; --muted:#9aa3b2; --line:#2a3039; --accent:#86a7ff;
+  --code-bg:#161a20; --code-fg:#d5dbe5; --gutter:#5b6474;
+  --red:#e57373; --orange:#ffb74d; --green:#81c784;
+  --k-s:#b89bf0; --k-l:#7fb0ff; --k-c:#5fd0ac; --k-i:#ffab5c; --k-r:#f08ab5; --k-h:#a3abba;
+  --t-kw:#c79bf2; --t-str:#8fd4a8; --t-com:#6e7787; --t-num:#f2a56b; --t-title:#8db4ff; --t-type:#6fd0dc;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121519; --surface:#191d23; --fg:#e3e7ee; --muted:#9aa3b2; --line:#2a3039; --accent:#86a7ff;
+  --code-bg:#161a20; --code-fg:#d5dbe5; --gutter:#5b6474;
+  --red:#e57373; --orange:#ffb74d; --green:#81c784;
+  --k-s:#b89bf0; --k-l:#7fb0ff; --k-c:#5fd0ac; --k-i:#ffab5c; --k-r:#f08ab5; --k-h:#a3abba;
+  --t-kw:#c79bf2; --t-str:#8fd4a8; --t-com:#6e7787; --t-num:#f2a56b; --t-title:#8db4ff; --t-type:#6fd0dc;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:24px}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--fg);font:16px/1.7 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+code{font-family:var(--f-mono);font-size:.86em;background:var(--code-bg);padding:.1em .35em;border-radius:4px;overflow-wrap:anywhere}
+h1,h2,h3,h4{font-family:var(--f-head);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0}
+
+.wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:240px minmax(0,1fr);gap:56px;padding-block:48px 96px}
+@media (max-width:960px){.wrap{grid-template-columns:minmax(0,1fr);gap:32px;padding-block:28px 64px}}
+
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:14px}
+nav.toc ul{list-style:none;margin:0;padding:0}
+nav.toc>ul>li{margin-bottom:10px}
+nav.toc ul ul{margin:6px 0 0 2px;padding-left:12px;border-left:1px solid var(--line)}
+nav.toc ul ul li{margin:3px 0}
+nav.toc a{color:var(--muted);text-decoration:none}
+nav.toc>ul>li>a{color:var(--fg);font-weight:500}
+nav.toc a:hover{color:var(--accent)}
+.toc-label{font:600 12px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+@media (max-width:960px){nav.toc{position:static;max-height:none;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px}}
+.toc-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.toc-head .toc-label{margin-bottom:0}
+.toc-btn{font:500 13px var(--f-body);color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:4px 12px;cursor:pointer}
+.toc-btn:hover{color:var(--accent);border-color:var(--accent)}
+.toc-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.show-toc{position:fixed;z-index:5;top:calc(env(safe-area-inset-top,0px) + 16px);left:max(16px,env(safe-area-inset-left,0px));padding:7px 14px;box-shadow:0 2px 10px rgba(20,30,50,.12)}
+body.toc-hidden nav.toc{display:none}
+body.toc-hidden .wrap{grid-template-columns:minmax(0,1fr)}
+body.toc-hidden main{margin:0 auto;width:100%}
+@media (max-width:1300px){body.toc-hidden .wrap{padding-top:72px}}
+
+main{min-width:0;max-width:780px}
+.hero{padding-bottom:40px;border-bottom:1px solid var(--line);margin-bottom:56px}
+.hero .eyebrow{margin-bottom:10px}
+.hero h1{font-size:clamp(30px,4.4vw,42px);font-weight:600;letter-spacing:-.01em;margin-bottom:16px}
+.hero p{color:var(--muted);max-width:62ch;font-size:17px}
+.hero .how{margin-top:20px;display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;color:var(--muted)}
+.eyebrow{font:600 12px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+
+section.block{margin-bottom:80px}
+section.block>h2,.group-title{font-size:28px;font-weight:600;margin-bottom:8px}
+.sub{color:var(--muted);margin-bottom:28px;max-width:64ch}
+.group-title{margin-top:16px;padding-top:40px;border-top:1px solid var(--line)}
+
+.ideas{display:grid;gap:14px}
+.idea{display:grid;grid-template-columns:34px minmax(0,1fr);gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.idea .n{font:600 15px var(--f-head);color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);width:30px;height:30px;border-radius:50%;display:grid;place-items:center}
+.idea h3{font-size:17px;margin-bottom:4px}
+.idea p{color:var(--muted)}
+.idea p code{color:var(--fg)}
+.read-call{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;overflow-x:auto}
+.read-call pre{margin:0;font:14px/1.9 var(--f-mono);color:var(--code-fg)}
+.read-call .a{color:var(--k-l);font-weight:500}.read-call .b{color:var(--t-num)}.read-call .c{color:var(--k-c);font-weight:500}
+.read-call .lab{font:13px var(--f-body);color:var(--muted)}
+
+/* phone mock */
+.map{display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start}
+.phone{width:300px;max-width:100%;border:1px solid var(--line);border-radius:28px;background:var(--surface);padding:10px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 8px 28px rgba(20,30,50,.08);flex-shrink:0}
+.screen{border-radius:20px;overflow:hidden;background:var(--bg);position:relative;font-size:13px;line-height:1.35}
+.appbar{background:var(--surface);padding:14px 14px 0;border-bottom:1px solid var(--line)}
+.appbar .row{display:flex;justify-content:space-between;align-items:center;font:600 17px var(--f-head)}
+.tabs{display:flex;margin-top:12px}
+.tabs span{flex:1;text-align:center;padding:8px 0 9px;color:var(--muted);font-weight:500;font-size:12.5px}
+.tabs span.on{color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
+.gh{padding:12px 16px 6px;font:700 11px var(--f-body);letter-spacing:.1em}
+.tcard{margin:0 10px 6px;background:var(--surface);border:1px solid var(--line);border-radius:10px;display:flex;overflow:hidden}
+.tcard .strip{width:4px;flex-shrink:0}
+.tcard .body{flex:1;padding:8px 6px 8px 12px;min-width:0}
+.tcard .t{font-weight:600;font-size:13.5px}
+.tcard .s{font-size:12px;margin-top:2px}
+.tcard .chip{align-self:center;font-size:10.5px;border:1px solid var(--line);border-radius:8px;padding:2px 7px;color:var(--muted)}
+.tcard .box{align-self:center;width:16px;height:16px;border:2px solid var(--muted);border-radius:3px;margin:0 12px 0 10px;flex-shrink:0}
+.fab{position:absolute;right:14px;bottom:14px;width:46px;height:46px;border-radius:14px;background:color-mix(in srgb,var(--accent) 18%,var(--surface));color:var(--accent);display:grid;place-items:center;font-size:24px;font-weight:300}
+.pin{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--fg);color:var(--bg);font:600 10.5px var(--f-body);vertical-align:middle;margin-left:4px;flex-shrink:0}
+.legend{flex:1;min-width:260px;list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.legend li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:start}
+.legend li .pin{margin:3px 0 0}
+.legend small{display:block;color:var(--muted);font-size:13.5px}
+
+/* tables */
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font:600 12px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--line) 35%,transparent)}
+td:first-child{white-space:nowrap}
+table.mini{margin:4px 0 12px;font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;border-collapse:separate;border-spacing:0;overflow:hidden}
+table.mini th,table.mini td{padding:8px 12px}
+table.mini td:first-child{white-space:nowrap}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:baseline}
+
+/* widget pills */
+.w{font:500 .84em var(--f-mono);padding:.12em .5em;border-radius:6px;white-space:nowrap;color:var(--k);background:color-mix(in srgb,var(--k) 12%,transparent)}
+.k-s{--k:var(--k-s)}.k-l{--k:var(--k-l)}.k-c{--k:var(--k-c)}.k-i{--k:var(--k-i)}.k-r{--k:var(--k-r)}.k-h{--k:var(--k-h)}
+.legend-line{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;font-size:14px}
+
+.dict{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.dict div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.dict .w{font-size:13.5px}
+.dict p{margin-top:8px;font-size:14px;color:var(--muted);line-height:1.55}
+.dict a{font-size:12.5px;display:inline-block;margin-top:6px}
+
+/* files */
+section.file{margin:56px 0 72px}
+.file-head{margin-bottom:24px}
+.file-head .eyebrow{margin-bottom:8px}
+.file-head h3{font-size:21px;font-weight:600;margin-bottom:10px}
+.file-head h3 code{background:none;padding:0;font-size:.92em}
+.lead{color:var(--muted);max-width:66ch}
+.tree-box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px 18px;margin-bottom:36px;overflow-x:auto}
+pre.tree{margin:8px 0 0;font:13.5px/2 var(--f-mono);color:var(--gutter)}
+pre.tree .w{font-size:13px}
+.tc{font-family:var(--f-body);font-size:12.5px;color:var(--muted);margin-left:6px}
+
+.chunk{margin-bottom:44px}
+.chunk h4{font-size:17px;font-weight:600;margin-bottom:12px}
+.code{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--code-bg)}
+.code-head{display:flex;justify-content:space-between;gap:12px;padding:7px 14px;font:12px var(--f-mono);color:var(--gutter);border-bottom:1px solid var(--line)}
+.code-head span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.code-head span:last-child{white-space:nowrap}
+.code-scroll{display:flex;overflow-x:auto}
+.code pre{margin:0;padding:12px 0;font:13.5px/1.75 var(--f-mono)}
+.gutter{color:var(--gutter);text-align:right;padding-left:14px!important;padding-right:12px!important;user-select:none;border-right:1px solid var(--line);flex-shrink:0}
+.src{padding-left:16px!important;padding-right:20px!important;color:var(--code-fg);flex:1}
+.src code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+.note{margin-top:16px;display:grid;gap:12px;max-width:70ch}
+.note ul,.note ol{margin:0;padding-left:22px;display:grid;gap:6px}
+.terms{margin-top:16px;border-left:3px solid color-mix(in srgb,var(--accent) 45%,transparent);padding:4px 0 4px 18px}
+.terms-label{font:600 11.5px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.terms dl{margin:0;display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:9px 18px;font-size:14.5px;line-height:1.6}
+.terms dt code{color:var(--fg)}
+.terms dd{margin:0;color:var(--muted)}
+.terms dd code{color:var(--fg)}
+@media (max-width:640px){.terms dl{grid-template-columns:minmax(0,1fr);gap:2px}.terms dd{margin-bottom:10px}}
+
+/* flow */
+.flow{list-style:none;margin:0;padding:0;counter-reset:f;display:grid;gap:0}
+.flow li{counter-increment:f;display:grid;grid-template-columns:36px minmax(0,1fr);gap:16px;position:relative;padding-bottom:22px}
+.flow li::before{content:counter(f);width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:600 14px var(--f-head);background:var(--surface);border:1.5px solid var(--accent);color:var(--accent);position:relative;z-index:1}
+.flow li:not(:last-child)::after{content:"";position:absolute;left:15px;top:30px;bottom:0;width:1.5px;background:var(--line)}
+.flow b{display:block;font-weight:600}
+.flow span{color:var(--muted);font-size:15px}
+.flow .ref{display:inline-block;margin-top:2px;font:12.5px var(--f-mono);color:var(--gutter)}
+
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-bottom:10px}
+summary{cursor:pointer;padding:14px 18px;font-weight:500;list-style:none;display:flex;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";color:var(--accent);font:600 18px/1.3 var(--f-head);width:14px;flex-shrink:0}
+details[open] summary::before{content:"−"}
+details p{padding:0 18px 16px 44px;color:var(--muted)}
+
+/* syntax colors (highlight.js classes) */
+.hljs-keyword,.hljs-meta{color:var(--t-kw)}
+.hljs-string,.hljs-regexp{color:var(--t-str)}
+.hljs-comment{color:var(--t-com);font-style:italic}
+.hljs-number,.hljs-literal{color:var(--t-num)}
+.hljs-title,.hljs-title.function_{color:var(--t-title)}
+.hljs-title.class_,.hljs-type,.hljs-built_in{color:var(--t-type)}
+.hljs-subst{color:var(--code-fg)}
+.hljs-attr,.hljs-variable,.hljs-params{color:var(--code-fg)}
+</style>
+
+<div class="wrap">
+<button type="button" class="toc-btn show-toc" id="show-toc" aria-controls="toc" hidden>☰ Contents</button>
+<nav class="toc" id="toc" aria-label="Contents"><div class="toc-head"><div class="toc-label">Contents</div><button type="button" class="toc-btn" id="hide-toc" aria-controls="toc">Hide</button></div><ul><li><a href="#start">Read Flutter in 5 ideas</a></li><li><a href="#map">The screen, labeled</a></li><li><a href="#syntax">Dart syntax cheat sheet</a></li><li><a href="#dict">Widget dictionary</a></li><li><a href="#g-flutter">Your Flutter files</a><ul><li><a href="#home">home_screen.dart</a></li><li><a href="#tab">task_list_tab.dart</a></li><li><a href="#grouped">grouped_task_list.dart</a></li><li><a href="#card">task_card.dart</a></li><li><a href="#header">group_header.dart</a></li><li><a href="#empty">empty_state.dart</a></li></ul></li><li><a href="#g-logic">Rules, models, API calls</a><ul><li><a href="#urgency">urgency.dart</a></li><li><a href="#models">task.dart</a></li><li><a href="#api">api_service.dart</a></li><li><a href="#config">config.dart</a></li></ul></li><li><a href="#flow">Flow: ticking a task</a></li><li><a href="#g-backend">Your backend files</a><ul><li><a href="#routes">tasks.js</a></li><li><a href="#repo">tasks.js</a></li><li><a href="#dates">dates.js</a></li><li><a href="#schema">schema.prisma</a></li></ul></li><li><a href="#quiz">Check yourself</a></li></ul></nav>
+<main>
+
+<header class="hero">
+  <div class="eyebrow">DueSoon · Member 2 · Billy</div>
+  <h1>Seeing tasks: your code, line by line</h1>
+  <p>The Home screen, the three tabs, the task cards and the API calls behind them. The code below is copied from your files with real line numbers, so you can follow along in VS Code.</p>
+  <div class="how"><span>1 · Read the 5 ideas</span><span>2 · Look at the labeled screen</span><span>3 · Go file by file</span></div>
+</header>
+
+<section class="block" id="start">
+  <h2>Read Flutter in 5 ideas</h2>
+  <p class="sub">Every widget file in your part follows these. Once they click, the files are mostly settings.</p>
+  <div class="ideas">
+    <div class="idea"><span class="n">1</span><div><h3>Everything on screen is a widget</h3><p>Text, padding, a row, a whole page: all widgets. Even spacing (<code>Padding</code>) and alignment (<code>Center</code>) are widgets that wrap other widgets.</p></div></div>
+    <div class="idea"><span class="n">2</span><div><h3>Widgets nest like boxes in boxes</h3><p>One child goes in <code>child:</code>, several go in <code>children: [ ]</code>. The deep indentation in your files is just this nesting. Read it as a tree, from the outside in.</p></div></div>
+    <div class="idea"><span class="n">3</span><div><h3><code>build()</code> returns the tree</h3><p>Flutter calls <code>build</code> whenever it needs to draw. It looks at the current data and returns widgets. It never "changes" the screen; it describes it again.</p></div></div>
+    <div class="idea"><span class="n">4</span><div><h3>Stateless draws inputs; Stateful also has memory</h3><p><code>TaskCard</code> is Stateless: same task in, same card out. <code>TaskListTab</code> is Stateful: it remembers <code>_tasks</code>, and its memory lives in a second class (<code>_TaskListTabState</code>).</p></div></div>
+    <div class="idea"><span class="n">5</span><div><h3><code>setState</code> = change memory, then redraw</h3><p>Change a variable inside <code>setState(() { … })</code> and Flutter calls <code>build</code> again with the new value. Without setState, the variable changes but the screen doesn't.</p></div></div>
+  </div>
+  <div class="read-call"><pre><span class="a">Padding</span>(                       <span class="lab">← widget name</span>
+  <span class="b">padding:</span> EdgeInsets.all(24),   <span class="lab">← a setting, written name: value</span>
+  <span class="c">child:</span> <span class="a">Text</span>('Hello'),         <span class="lab">← what goes inside</span>
+)</pre></div>
+</section>
+
+<section class="block" id="map">
+  <h2>The screen, labeled</h2>
+  <p class="sub">The This Week tab, with each part linked to the file that draws it.</p>
+  <div class="map">
+    <div class="phone" aria-label="Mock of the Home screen"><div class="screen">
+      <div class="appbar"><div class="row"><span>DueSoon <span class="pin">1</span></span><span style="font-size:15px;color:var(--muted)">⎋</span></div>
+        <div class="tabs"><span class="on">This Week</span><span>All</span><span>Done</span></div></div>
+      <div style="padding:2px 0 76px">
+        <div class="gh" style="color:var(--red)">OVERDUE <span class="pin">3</span></div>
+        <div class="tcard"><div class="strip" style="background:var(--red)"></div><div class="body"><div class="t">Lab 3 report</div><div class="s" style="color:var(--red)">CSC452 · 2 days overdue</div></div><span class="chip">Assignment</span><span class="box"></span></div>
+        <div class="gh" style="color:var(--orange)">TODAY</div>
+        <div class="tcard"><div class="strip" style="background:var(--orange)"></div><div class="body"><div class="t">Quiz 4 <span class="pin">4</span></div><div class="s" style="color:var(--orange)">CSC452 · Due today</div></div><span class="chip">Quiz</span><span class="box"></span></div>
+        <div class="gh" style="color:var(--green)">THIS WEEK</div>
+        <div class="tcard"><div class="strip" style="background:var(--green)"></div><div class="body"><div class="t">Essay draft</div><div class="s" style="color:var(--green)">ENG201 · In 5 days</div></div><span class="chip">Assignment</span><span class="box"></span></div>
+        <div style="text-align:center;margin-top:10px"><span class="pin">2</span></div>
+      </div>
+      <div class="fab">+</div>
+    </div></div>
+    <ol class="legend">
+      <li><span class="pin">1</span><div><a href="#home">home_screen.dart</a><small>AppBar with title + log out, the TabBar, the + button. Holds the 3 tabs.</small></div></li>
+      <li><span class="pin">2</span><div><a href="#tab">task_list_tab.dart</a><small>The whole scrolling area of one tab: loading, pull-to-refresh, empty or error message.</small></div></li>
+      <li><span class="pin">3</span><div><a href="#header">group_header.dart</a><small>"OVERDUE", "TODAY"… Which group and color come from <a href="#urgency">urgency.dart</a>; the order from <a href="#grouped">grouped_task_list.dart</a>.</small></div></li>
+      <li><span class="pin">4</span><div><a href="#card">task_card.dart</a><small>One task: color strip, title, "course · when", type chip, checkbox.</small></div></li>
+      <li><span class="pin" style="background:var(--muted)">·</span><div><a href="#api">api_service.dart</a> + <a href="#models">task.dart</a><small>Not visible: fetch the JSON and turn it into Task objects.</small></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="block" id="syntax">
+  <h2>Dart syntax cheat sheet</h2>
+  <p class="sub">Only the syntax that appears in your files, each with an example from your code.</p>
+  <div class="tbl"><table><tr><th>Syntax</th><th>Means</th><th>In your code</th></tr>
+  <tr><td><code>final x = …</code></td><td>Set once, never reassigned.</td><td><code>final tasks = _tasks;</code></td></tr><tr><td><code>const</code></td><td>Fixed at compile time; Flutter can reuse it.</td><td><code>const Text('DueSoon')</code></td></tr><tr><td><code>Type?</code></td><td>May be null (empty).</td><td><code>List&lt;Task&gt;? _tasks</code></td></tr><tr><td><code>x ?? y</code></td><td>x, or y if x is null.</td><td><code>widget.api ?? ApiService()</code></td></tr><tr><td><code>x?.y</code></td><td>Use y only if x isn't null.</td><td><code>titleMedium?.copyWith(…)</code></td></tr><tr><td><code>x!</code></td><td>"Trust me, x isn't null."</td><td><code>byGroup[g]!</code></td></tr><tr><td><code>_name</code></td><td>Private to this file.</td><td><code>_load()</code>, <code>_busy</code></td></tr><tr><td><code>{required this.a, this.b = 1}</code></td><td>Named parameters; required or with a default.</td><td><code>TaskCard(task: t, onToggleDone: f)</code></td></tr><tr><td><code>() => value</code></td><td>One-line function: returns value.</td><td><code>(_) =&gt; false</code></td></tr><tr><td><code>async / await / Future</code></td><td>Takes time; wait for it without freezing the app.</td><td><code>await widget.api.getTasks(…)</code></td></tr><tr><td><code>'Hi $name ${a.b}'</code></td><td>Put values inside text.</td><td><code>'${task.courseCode} · $when'</code></td></tr><tr><td><code>cond ? a : b</code></td><td>Short if/else that gives a value.</td><td><code>busy ? spinner : Checkbox(…)</code></td></tr><tr><td><code>switch (x) { a => 1, _ => 2 }</code></td><td>Pick a value by matching; <code>_</code> = default.</td><td><code>typeLabel</code>, <code>_empty</code></td></tr><tr><td><code>[for (…) x]  [if (…) x]  ...list</code></td><td>Build lists with loops and ifs; <code>...</code> unpacks a list.</td><td><code>groupedRows</code></td></tr><tr><td><code>(icon: x, text: y)</code></td><td>Record: a quick bundle of named values.</td><td><code>_empty</code></td></tr><tr><td><code>Foo(:final bar)</code></td><td>Pattern: "if it's a Foo, take out bar".</td><td><code>HeaderRow(:final group)</code></td></tr><tr><td><code>List&lt;Task&gt;  Map&lt;K, V&gt;</code></td><td>Generic: says what's inside.</td><td><code>Future&lt;List&lt;Task&gt;&gt;</code></td></tr>
+  </table></div>
+</section>
+
+<section class="block" id="dict">
+  <h2>Widget dictionary</h2>
+  <p class="sub">Every Flutter widget in your part. The color shows what kind of job it does, and the same colors are used throughout this page.</p>
+  <div class="legend-line"><span class="w k-s">Structure</span> <span class="w k-l">Layout</span> <span class="w k-c">Content</span> <span class="w k-i">Interaction</span> <span class="w k-r">Scrolling</span> <span class="w k-h">Helper</span></div>
+  <div class="dict"><div><span class="w k-s">Scaffold</span><p>Page frame with slots: appBar, body, floatingActionButton.</p><a href="#home">see it in use →</a></div><div><span class="w k-s">AppBar</span><p>The top bar: title, action icons, optional bottom (our tabs).</p><a href="#home">see it in use →</a></div><div><span class="w k-s">Card</span><p>Rounded, slightly raised surface.</p><a href="#card">see it in use →</a></div><div><span class="w k-l">Row / Column</span><p>Children side by side / top to bottom.</p><a href="#card">see it in use →</a></div><div><span class="w k-l">Expanded</span><p>Inside a Row/Column: take all leftover space.</p><a href="#card">see it in use →</a></div><div><span class="w k-l">Padding</span><p>Empty space around one child.</p><a href="#header">see it in use →</a></div><div><span class="w k-l">SizedBox</span><p>A fixed size; empty, it's a gap. With a child, it forces a size.</p><a href="#card">see it in use →</a></div><div><span class="w k-l">Center</span><p>Puts its child in the middle.</p><a href="#empty">see it in use →</a></div><div><span class="w k-l">Container</span><p>A box with size, color, padding… We use it for the strip.</p><a href="#card">see it in use →</a></div><div><span class="w k-l">IntrinsicHeight</span><p>Measures the content first, so stretch children know the height.</p><a href="#card">see it in use →</a></div><div><span class="w k-l">LayoutBuilder</span><p>Tells you how much space you have (constraints).</p><a href="#tab">see it in use →</a></div><div><span class="w k-c">Text</span><p>Shows text; style, maxLines, overflow.</p><a href="#card">see it in use →</a></div><div><span class="w k-c">Icon</span><p>Shows an icon from <code>Icons.*</code>.</p><a href="#empty">see it in use →</a></div><div><span class="w k-c">Chip</span><p>Small rounded label.</p><a href="#card">see it in use →</a></div><div><span class="w k-c">CircularProgressIndicator</span><p>Spinning loading circle.</p><a href="#tab">see it in use →</a></div><div><span class="w k-i">IconButton</span><p>Tappable icon (our log-out).</p><a href="#home">see it in use →</a></div><div><span class="w k-i">FloatingActionButton</span><p>The round + button bottom-right.</p><a href="#home">see it in use →</a></div><div><span class="w k-i">TabBar / Tab</span><p>The tab buttons under the AppBar.</p><a href="#home">see it in use →</a></div><div><span class="w k-i">InkWell</span><p>Makes anything tappable, with a ripple.</p><a href="#card">see it in use →</a></div><div><span class="w k-i">Checkbox</span><p>Shows a bool; reports taps via onChanged.</p><a href="#card">see it in use →</a></div><div><span class="w k-i">RefreshIndicator</span><p>Pull down to run a function.</p><a href="#tab">see it in use →</a></div><div><span class="w k-r">TabBarView</span><p>Swipeable pages, one per tab.</p><a href="#home">see it in use →</a></div><div><span class="w k-r">ListView</span><p>Scrollable list of children.</p><a href="#tab">see it in use →</a></div><div><span class="w k-r">ListView.builder</span><p>Scrollable list that only builds visible rows.</p><a href="#tab">see it in use →</a></div><div><span class="w k-h">DefaultTabController</span><p>Invisible; links TabBar and TabBarView.</p><a href="#home">see it in use →</a></div><div><span class="w k-h">Semantics</span><p>Invisible; what screen readers say.</p><a href="#card">see it in use →</a></div><div><span class="w k-h">Theme.of(context)</span><p>The app's colors and text styles.</p><a href="#card">see it in use →</a></div><div><span class="w k-h">Navigator + MaterialPageRoute</span><p>Open (push) and close (pop) screens.</p><a href="#home">see it in use →</a></div></div>
+</section>
+
+<h2 class="group-title" id="g-flutter">Your Flutter files</h2>
+<p class="sub">From the outside in: the screen, then the tab inside it, then the pieces the tab draws.</p>
+<section class="file" id="home"><header class="file-head"><div class="eyebrow">Screen · the page you see after logging in</div><h3><code>app/lib/screens/home_screen.dart</code></h3><p class="lead">The Home screen. It draws the top bar, the three tabs and the + button. It doesn't load any tasks itself: each tab is a <span class="w k-s">TaskListTab</span> that loads its own list.</p></header><div class="tree-box"><div class="terms-label">Widget tree (what build() returns)</div><pre class="tree"><span class="w k-h">DefaultTabController</span>  <span class="tc">length: 3, links the tab bar to the pages</span>
+└─ <span class="w k-s">Scaffold</span>  <span class="tc">the basic page frame</span>
+   ├─ appBar: <span class="w k-s">AppBar</span>
+   │  ├─ title:   <span class="w k-c">Text</span>('DueSoon')
+   │  ├─ actions: <span class="w k-i">IconButton</span>  <span class="tc">log out</span>
+   │  └─ bottom:  <span class="w k-i">TabBar</span> → <span class="w k-i">Tab</span> ×3  <span class="tc">This Week · All · Done</span>
+   ├─ body: <span class="w k-r">TabBarView</span>  <span class="tc">swipeable pages, same order as the tabs</span>
+   │  └─ <span class="w k-s">TaskListTab</span> ×3  <span class="tc">filter: week / all / done</span>
+   └─ floatingActionButton: <span class="w k-i">FloatingActionButton</span>  <span class="tc">the round + button</span></pre></div><article class="chunk"><h4>The widget class: what you pass in</h4><div class="code"><div class="code-head"><span>app/lib/screens/home_screen.dart</span><span>lines 11–18</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">11
+12
+13
+14
+15
+16
+17
+18</pre><pre class="src"><code class="language-dart">class HomeScreen extends StatefulWidget {
+  final ApiService? api; // tests pass a fake
+
+  const HomeScreen({super.key, this.api});
+
+  @override
+  State&lt;HomeScreen&gt; createState() =&gt; _HomeScreenState();
+}</code></pre></div></div><div class="note"><p>A screen in Flutter is a <strong>class</strong>. <code>HomeScreen</code> takes one optional input, <code>api</code>. The app doesn't pass one, so a real <code>ApiService</code> is created. Tests pass a fake one so they don't need the internet.</p>
+<p>It extends <code>StatefulWidget</code> because something on it can change (the <code>_version</code> number below). A StatefulWidget always comes in <strong>two classes</strong>: this one holds the inputs and the <code>_HomeScreenState</code> class holds what changes.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>extends StatefulWidget</code></dt><dd>This widget has memory that can change. The memory lives in a separate State class.</dd><dt><code>final ApiService? api</code></dt><dd><code>final</code> = set once, never changed. <code>?</code> = may be <code>null</code> (empty).</dd><dt><code>const HomeScreen({super.key, this.api})</code></dt><dd>The constructor. <code>{ }</code> means named parameters: you call it as <code>HomeScreen(api: x)</code>. <code>super.key</code> passes the key up to Flutter.</dd><dt><code>@override</code></dt><dd>"I'm replacing a method my parent class already has."</dd><dt><code>createState() => _HomeScreenState()</code></dt><dd><code>=&gt;</code> is a one-line function: "return this". Flutter calls it once to create the memory object.</dd></dl></div></article><article class="chunk"><h4>The memory: the api and a version number</h4><div class="code"><div class="code-head"><span>app/lib/screens/home_screen.dart</span><span>lines 20–22</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">20
+21
+22</pre><pre class="src"><code class="language-dart">class _HomeScreenState extends State&lt;HomeScreen&gt; {
+  late final ApiService _api = widget.api ?? ApiService();
+  int _version = 0; // bumping it rebuilds the tabs, so they reload</code></pre></div></div><div class="note"><p><code>_api</code> is the object that makes HTTP calls. It's shared with all three tabs.</p>
+<p><code>_version</code> is a trick. Every tab gets a key that includes this number. After you add a task, the number goes up, so every key changes. Flutter treats a widget with a new key as a <strong>brand-new widget</strong>, so all three tabs start over and reload their lists.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>_api</code></dt><dd>A name starting with <code>_</code> is private: only this file can use it.</dd><dt><code>late final</code></dt><dd><code>late</code> = work out the value the first time it's used, not earlier. Needed here because <code>widget</code> doesn't exist yet when the object is first made.</dd><dt><code>widget.api ?? ApiService()</code></dt><dd><code>??</code> = "if the left side is null, use the right side". So: the test's fake api, or a real one.</dd><dt><code>widget.api</code></dt><dd>Inside a State class, <code>widget</code> means "the widget object I belong to", so you can read its inputs.</dd></dl></div></article><article class="chunk"><h4>Log out</h4><div class="code"><div class="code-head"><span>app/lib/screens/home_screen.dart</span><span>lines 24–31</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">24
+25
+26
+27
+28
+29
+30
+31</pre><pre class="src"><code class="language-dart">void _logout() {
+  Session.clear();
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(builder: (_) =&gt; LoginScreen(api: widget.api)),
+    (_) =&gt; false,
+  );
+}</code></pre></div></div><div class="note"><p>It forgets the token (<code>Session.clear()</code>), then opens the Login screen and <strong>removes every screen behind it</strong>. That's what <code>(_) =&gt; false</code> means: "remove all old screens". Pressing Back after logging out then can't return to Home.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>Navigator.pushAndRemoveUntil</code></dt><dd>Open a new screen and remove old screens until the rule says stop. Here the rule never says stop, so all of them go.</dd><dt><code>MaterialPageRoute(builder: (_) => …)</code></dt><dd>A route is a screen plus its slide animation. <code>builder</code> is a function that makes the screen.</dd><dt><code>(_) => false</code></dt><dd>A small function with no name. <code>_</code> means "I get an argument but don't need it".</dd></dl></div></article><article class="chunk"><h4>The + button: add a task, then refresh</h4><div class="code"><div class="code-head"><span>app/lib/screens/home_screen.dart</span><span>lines 33–39</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">33
+34
+35
+36
+37
+38
+39</pre><pre class="src"><code class="language-dart">Future&lt;void&gt; _addTask() async {
+  final saved = await Navigator.push&lt;bool&gt;(
+    context,
+    MaterialPageRoute(builder: (_) =&gt; TaskFormScreen(api: _api)),
+  );
+  if (saved == true &amp;&amp; mounted) setState(() =&gt; _version++); // refresh rule (§6)
+}</code></pre></div></div><div class="note"><p><code>Navigator.push</code> opens the form screen and <strong>waits</strong> (<code>await</code>) until the user comes back. The form returns <code>true</code> if it saved a task. Only then do we bump <code>_version</code>, so the tabs reload (see above).</p>
+<p><code>mounted</code> checks that this screen still exists. While we waited, the user might have logged out.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>Future&lt;void&gt; … async</code></dt><dd>This function takes time (it waits for the user). <code>Future</code> = "a value that arrives later".</dd><dt><code>await</code></dt><dd>Pause here until the Future is finished, then continue with its value.</dd><dt><code>push&lt;bool&gt;</code></dt><dd>The <code>&lt;bool&gt;</code> says: the screen will return a true/false when it closes.</dd><dt><code>setState(() => _version++)</code></dt><dd>Change the memory <em>and</em> tell Flutter to redraw. Changing a variable without <code>setState</code> wouldn't update the screen.</dd></dl></div></article><article class="chunk"><h4>build(): the whole screen as nested widgets</h4><div class="code"><div class="code-head"><span>app/lib/screens/home_screen.dart</span><span>lines 41–77</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77</pre><pre class="src"><code class="language-dart">@override
+Widget build(BuildContext context) {
+  return DefaultTabController(
+    length: 3,
+    child: Scaffold(
+      appBar: AppBar(
+        title: const Text('DueSoon'),
+        actions: [
+          IconButton(
+            tooltip: 'Log out',
+            icon: const Icon(Icons.logout),
+            onPressed: _logout,
+          ),
+        ],
+        bottom: const TabBar(
+          tabs: [
+            Tab(text: 'This Week'),
+            Tab(text: 'All'),
+            Tab(text: 'Done'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        children: [
+          for (final filter in const ['week', 'all', 'done'])
+            TaskListTab(key: ValueKey('$filter-$_version'), filter: filter, api: _api),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        key: const Key('add-task'),
+        tooltip: 'Add task',
+        onPressed: _addTask,
+        child: const Icon(Icons.add),
+      ),
+    ),
+  );
+}</code></pre></div></div><div class="note"><p>Read it from the outside in, using the tree above. Every widget is a box. Its settings are written <code>name: value</code>, and what goes inside it is <code>child:</code> (one) or <code>children:</code> (a list).</p>
+<p><span class="w k-h">DefaultTabController</span> is invisible. It just links <span class="w k-i">TabBar</span> (the tab buttons) and <span class="w k-r">TabBarView</span> (the pages). Tap "All" and the view slides to page 2. <code>length: 3</code> must match the number of tabs and pages.</p>
+<p><span class="w k-s">Scaffold</span> is the standard page layout. It has named slots: <code>appBar</code> at the top, <code>body</code> in the middle, <code>floatingActionButton</code> bottom-right. You fill the slots and Scaffold places them.</p>
+<p>Line 65 builds the three tabs with a <code>for</code> loop <em>inside the list</em>. It's the same as writing <code>TaskListTab</code> three times.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>Widget build(BuildContext context)</code></dt><dd>Flutter calls this whenever it needs to draw. It must return one widget (the top of the tree). <code>context</code> = "where am I in the tree".</dd><dt><code>const Text('DueSoon')</code></dt><dd><code>const</code> = this never changes, so Flutter can reuse it instead of rebuilding it. A small speed win.</dd><dt><code>[ for (final f in …) Widget(f) ]</code></dt><dd>Collection-for: builds list items with a loop, right inside <code>[ ]</code>.</dd><dt><code>ValueKey('$filter-$_version')</code></dt><dd>A key gives a widget an identity, e.g. <code>'week-0'</code>. A different key means a different widget, so it starts fresh.</dd><dt><code>Key('add-task')</code></dt><dd>A name that tests use to find and tap this button.</dd><dt><code>onPressed: _addTask</code></dt><dd>Passes the function itself (no <code>()</code>). Flutter calls it later, on tap.</dd></dl></div></article></section><section class="file" id="tab"><header class="file-head"><div class="eyebrow">Widget · one tab's list</div><h3><code>app/lib/widgets/task_list_tab.dart</code></h3><p class="lead">The most important file in your part. It <strong>loads</strong> one list from the API, keeps it in memory, and <strong>draws</strong> one of four things: a spinner, an error, an empty message, or the list.</p></header><div class="tree-box"><div class="terms-label">Widget tree (what build() returns)</div><pre class="tree"><span class="w k-i">RefreshIndicator</span>  <span class="tc">pull down → _load()</span>
+└─ one of:
+   ├─ <span class="w k-l">Center</span> → <span class="w k-c">CircularProgressIndicator</span>   <span class="tc">first load (returned early, no pull)</span>
+   ├─ <span class="w k-l">LayoutBuilder</span> → <span class="w k-r">ListView</span> → <span class="w k-l">SizedBox</span> → <span class="w k-c">EmptyState</span>   <span class="tc">empty or failed</span>
+   └─ <span class="w k-r">ListView.builder</span>   <span class="tc">the real list</span>
+      ├─ <span class="w k-c">GroupHeader</span>   <span class="tc">for a HeaderRow</span>
+      └─ <span class="w k-s">TaskCard</span>      <span class="tc">for a TaskRow</span></pre></div><article class="chunk"><h4>Inputs: which list, and the api</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_list_tab.dart</span><span>lines 14–22</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">14
+15
+16
+17
+18
+19
+20
+21
+22</pre><pre class="src"><code class="language-dart">class TaskListTab extends StatefulWidget {
+  final String filter; // week | all | done
+  final ApiService api;
+
+  const TaskListTab({super.key, required this.filter, required this.api});
+
+  @override
+  State&lt;TaskListTab&gt; createState() =&gt; _TaskListTabState();
+}</code></pre></div></div><div class="note"><p>Home creates this three times with a different <code>filter</code>. The filter goes straight into the URL: <code>GET /tasks?filter=week</code>.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>required this.filter</code></dt><dd>The caller <em>must</em> pass it. Forgetting it is an error before the app even runs.</dd></dl></div></article><article class="chunk"><h4>The memory: three variables decide the whole screen</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_list_tab.dart</span><span>lines 24–27</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">24
+25
+26
+27</pre><pre class="src"><code class="language-dart">class _TaskListTabState extends State&lt;TaskListTab&gt; {
+  List&lt;Task&gt;? _tasks; // null until the first load succeeds
+  bool _failed = false;
+  final Set&lt;int&gt; _busy = {}; // task ids with a done/undo request running</code></pre></div></div><div class="note"><table class="mini"><tr><th>Variable</th><th>Meaning</th><th>Example</th></tr>
+<tr><td><code>_tasks</code></td><td>The list from the server. <code>null</code> = not loaded yet.</td><td><code>null</code> → <code>[Lab 3, Quiz 2]</code></td></tr>
+<tr><td><code>_failed</code></td><td>Did the last load fail?</td><td><code>true</code> with Wi-Fi off</td></tr>
+<tr><td><code>_busy</code></td><td>Task ids with a done/undo request running.</td><td><code>{12}</code> while task 12 saves</td></tr></table>
+<p><code>build()</code> just looks at these three and draws. To change the screen, change one of them inside <code>setState</code>.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>List&lt;Task&gt;?</code></dt><dd>A list of Task objects, or null. <code>&lt;Task&gt;</code> says what's inside the list.</dd><dt><code>final Set&lt;int&gt; _busy = {}</code></dt><dd>A Set is a list without duplicates and with a fast <code>contains</code>. <code>final</code> means the variable always points to the same Set, but you can still add and remove items.</dd></dl></div></article><article class="chunk"><h4>initState: runs once, when the tab first appears</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_list_tab.dart</span><span>lines 29–33</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">29
+30
+31
+32
+33</pre><pre class="src"><code class="language-dart">@override
+void initState() {
+  super.initState();
+  _load();
+}</code></pre></div></div><div class="note"><p>The place for "do this when the widget is born". Here it starts loading. <code>super.initState()</code> must come first, so Flutter can do its own setup.</p>
+<p>It doesn't <code>await _load()</code> because <code>initState</code> can't be <code>async</code>. The load runs in the background and calls <code>setState</code> when it's done.</p></div></article><article class="chunk"><h4>_load(): ask the server, then remember the answer</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_list_tab.dart</span><span>lines 35–48</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48</pre><pre class="src"><code class="language-dart">Future&lt;void&gt; _load() async {
+  try {
+    final tasks = await widget.api.getTasks(widget.filter);
+    if (!mounted) return;
+    setState(() {
+      _tasks = tasks;
+      _failed = false;
+    });
+  } on ApiException catch (e) {
+    if (!mounted) return;
+    setState(() =&gt; _failed = true);
+    showApiError(context, e);
+  }
+}</code></pre></div></div><div class="note"><p><strong>Success:</strong> save the tasks and clear the error flag, inside <code>setState</code>, so the list appears.<br><strong>Failure:</strong> set <code>_failed</code> and show a red snackbar message (<code>showApiError</code>).</p>
+<p><code>if (!mounted) return;</code> appears twice. The request can take a few seconds, and meanwhile the user may have left this screen. Calling <code>setState</code> on a widget that's gone is an error, so we stop.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>try { … } on ApiException catch (e) { … }</code></dt><dd>Run the code. If it throws an <code>ApiException</code>, jump to the <code>on</code> block with the error in <code>e</code>.</dd><dt><code>mounted</code></dt><dd><code>true</code> while this widget is still on screen.</dd><dt><code>setState(() { a; b; })</code></dt><dd>Several changes, one redraw.</dd></dl></div></article><article class="chunk"><h4>_toggleDone(): the checkbox was tapped</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_list_tab.dart</span><span>lines 50–62</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62</pre><pre class="src"><code class="language-dart">/// D-46: wait for the server, then reload, so the list always matches the API.
+Future&lt;void&gt; _toggleDone(Task task, bool done) async {
+  if (_busy.contains(task.id)) return; // ignore double taps
+  setState(() =&gt; _busy.add(task.id));
+  try {
+    await widget.api.setDone(task.id, done);
+    await _load();
+  } on ApiException catch (e) {
+    if (mounted) showApiError(context, e);
+  } finally {
+    if (mounted) setState(() =&gt; _busy.remove(task.id));
+  }
+}</code></pre></div></div><div class="note"><ol class="steps"><li>Already busy with this task? Ignore the tap. This stops a double tap from sending two requests.</li>
+<li>Mark it busy, so the card shows a small spinner instead of the checkbox.</li>
+<li>Tell the server, <strong>wait</strong>, then reload the list. The screen only changes after the server agrees (decision D-46).</li>
+<li><code>finally</code> always runs, success or error, so the spinner always goes away.</li></ol></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>finally { … }</code></dt><dd>Runs after <code>try</code>, whether it worked or threw an error. Used for cleanup.</dd><dt><code>if (mounted) showApiError(context, e)</code></dt><dd>Show the error only if we're still on screen.</dd></dl></div></article><article class="chunk"><h4>_openDetail(): tap a card → detail screen → maybe reload</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_list_tab.dart</span><span>lines 64–71</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">64
+65
+66
+67
+68
+69
+70
+71</pre><pre class="src"><code class="language-dart">/// S5; reload when it reports a change (refresh rule, §6).
+Future&lt;void&gt; _openDetail(Task task) async {
+  final changed = await Navigator.push&lt;bool&gt;(
+    context,
+    MaterialPageRoute(builder: (_) =&gt; TaskDetailScreen(taskId: task.id, api: widget.api)),
+  );
+  if (changed == true &amp;&amp; mounted) await _load();
+}</code></pre></div></div><div class="note"><p>Same pattern as the + button on Home. Open the screen, wait for it to close, and reload only if it returns <code>true</code> (the task was edited, deleted or ticked there).</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>changed == true</code></dt><dd>Written this way because <code>changed</code> can be <code>true</code>, <code>false</code> or <code>null</code> (closed with Back). Only <code>true</code> counts.</dd></dl></div></article><article class="chunk"><h4>_empty: the empty message for each tab</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_list_tab.dart</span><span>lines 73–77</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">73
+74
+75
+76
+77</pre><pre class="src"><code class="language-dart">({IconData icon, String text}) get _empty =&gt; switch (widget.filter) {
+      'week' =&gt; (icon: Icons.celebration, text: 'Nothing due this week 🎉'),
+      'done' =&gt; (icon: Icons.task_alt, text: 'Nothing finished yet'),
+      _ =&gt; (icon: Icons.playlist_add, text: 'No tasks yet. Tap + to add one'),
+    };</code></pre></div></div><div class="note"><p>A getter that returns two values at once (an icon and a text), picked by the filter. On the Week tab you see 🎉 "Nothing due this week".</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>({IconData icon, String text})</code></dt><dd>A <strong>record</strong>: a quick bundle of named values, without writing a class. Read it with <code>e.icon</code>, <code>e.text</code>.</dd><dt><code>get _empty =></code></dt><dd>A <strong>getter</strong>: used like a variable (<code>_empty</code>), but computed each time.</dd><dt><code>switch (x) { 'week' => …, _ => … }</code></dt><dd>A switch <em>expression</em>: picks one value. <code>_</code> = "anything else" (the default).</dd></dl></div></article><article class="chunk"><h4>build(), case 1: still loading</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_list_tab.dart</span><span>lines 79–84</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">79
+80
+81
+82
+83
+84</pre><pre class="src"><code class="language-dart">@override
+Widget build(BuildContext context) {
+  final tasks = _tasks;
+  if (tasks == null &amp;&amp; !_failed) {
+    return const Center(child: CircularProgressIndicator());
+  }</code></pre></div></div><div class="note"><p>No tasks yet and no error means we're still waiting for the first answer, so show a centered spinner. <code>return</code> exits early, and the rest of <code>build</code> is skipped.</p>
+<p><code>final tasks = _tasks;</code> copies the field into a local variable. Dart can then be sure it won't change halfway through, and lets us use it without <code>!</code> after the null check.</p></div></article><article class="chunk"><h4>build(), cases 2 and 3: failed, or empty</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_list_tab.dart</span><span>lines 86–102</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102</pre><pre class="src"><code class="language-dart">final Widget body;
+if (tasks == null || tasks.isEmpty) {
+  // Still scrollable so pull-to-refresh works on an empty or failed list.
+  final e = tasks == null
+      ? (icon: Icons.cloud_off, text: "Couldn't load tasks. Pull to retry.")
+      : _empty;
+  body = LayoutBuilder(
+    builder: (context, constraints) =&gt; ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        SizedBox(
+          height: constraints.maxHeight,
+          child: EmptyState(icon: e.icon, text: e.text),
+        ),
+      ],
+    ),
+  );</code></pre></div></div><div class="note"><p>Both show an <span class="w k-c">EmptyState</span> (icon + one line). <code>tasks == null</code> here can only mean "failed", so it shows the cloud-off icon.</p>
+<p><strong>The tricky part:</strong> why put one message inside a <span class="w k-r">ListView</span>? Pull-to-refresh only works on something that can scroll, and a plain centered message can't. So:</p>
+<ul><li><span class="w k-l">LayoutBuilder</span> tells us how tall the space is (<code>constraints.maxHeight</code>).</li>
+<li><span class="w k-l">SizedBox</span> makes the message exactly that tall, so it stays centered.</li>
+<li><code>AlwaysScrollableScrollPhysics</code> lets the list be pulled even when there's nothing to scroll.</li></ul></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>final Widget body;</code></dt><dd>Declared now, given a value later (in the <code>if</code> or the <code>else</code>). Dart checks that it gets a value exactly once.</dd><dt><code>cond ? a : b</code></dt><dd>Short if/else that returns a value.</dd><dt><code>builder: (context, constraints) => …</code></dt><dd>LayoutBuilder calls this function and passes the available size in <code>constraints</code>.</dd></dl></div></article><article class="chunk"><h4>build(), case 4: the real list</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_list_tab.dart</span><span>lines 103–120</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120</pre><pre class="src"><code class="language-dart">} else {
+  final rows = widget.filter == 'done' ? flatRows(tasks) : groupedRows(tasks);
+  body = ListView.builder(
+    physics: const AlwaysScrollableScrollPhysics(),
+    padding: const EdgeInsets.only(bottom: 88), // room for the + button
+    itemCount: rows.length,
+    itemBuilder: (context, i) =&gt; switch (rows[i]) {
+      HeaderRow(:final group) =&gt; GroupHeader(group: group),
+      TaskRow(:final task) =&gt; TaskCard(
+          key: ValueKey(task.id),
+          task: task,
+          busy: _busy.contains(task.id),
+          onToggleDone: (done) =&gt; _toggleDone(task, done),
+          onTap: () =&gt; _openDetail(task),
+        ),
+    },
+  );
+}</code></pre></div></div><div class="note"><p>First turn the tasks into <strong>rows</strong>: headers + tasks for Week/All, tasks only for Done (see the next file).</p>
+<p><span class="w k-r">ListView.builder</span> builds rows <em>lazily</em>. It only calls <code>itemBuilder</code> for the rows on screen, so even 500 tasks stay fast. <code>itemCount</code> says how many rows there are; <code>i</code> is the row number.</p>
+<p>The <code>switch</code> checks what kind of row it is. A header becomes a <span class="w k-c">GroupHeader</span> and a task becomes a <span class="w k-s">TaskCard</span>. The card gets <strong>functions</strong> (<code>onToggleDone</code>, <code>onTap</code>), so the card itself never talks to the API.</p>
+<p><code>padding: bottom 88</code> leaves empty space at the end so the last card isn't hidden under the + button.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>HeaderRow(:final group) =></code></dt><dd>A <strong>pattern</strong>: "if this row is a HeaderRow, take its <code>group</code> field into a variable called <code>group</code>".</dd><dt><code>key: ValueKey(task.id)</code></dt><dd>Ties each card to its task id, so Flutter doesn't mix up cards when the list changes.</dd><dt><code>(done) => _toggleDone(task, done)</code></dt><dd>A small function made on the spot. The card calls it with true/false, and it adds the task.</dd></dl></div></article><article class="chunk"><h4>Wrap it all in pull-to-refresh</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_list_tab.dart</span><span>lines 122–122</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">122</pre><pre class="src"><code class="language-dart">return RefreshIndicator(onRefresh: _load, child: body);</code></pre></div></div><div class="note"><p><span class="w k-i">RefreshIndicator</span> shows the spinning circle when you pull down, calls <code>_load</code>, and hides the circle when <code>_load</code>'s Future finishes. It needs a scrollable child, which is why every case above is a ListView.</p></div></article></section><section class="file" id="grouped"><header class="file-head"><div class="eyebrow">Helper · tasks → rows (not a widget)</div><h3><code>app/lib/widgets/grouped_task_list.dart</code></h3><p class="lead">No UI here, just plain Dart. It turns a list of tasks into a list of <strong>rows</strong> for the ListView: <code>[Header Overdue, Lab 3, Header Today, Essay, Quiz]</code>.</p></header><article class="chunk"><h4>Two kinds of row</h4><div class="code"><div class="code-head"><span>app/lib/widgets/grouped_task_list.dart</span><span>lines 4–16</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16</pre><pre class="src"><code class="language-dart">/// One row of a task list: either a day-group header or a task (§6.1).
+/// One flat list keeps it to a single ListView.builder, no extra packages.
+sealed class ListRow {}
+
+class HeaderRow extends ListRow {
+  final TaskGroup group;
+  HeaderRow(this.group);
+}
+
+class TaskRow extends ListRow {
+  final Task task;
+  TaskRow(this.task);
+}</code></pre></div></div><div class="note"><p>A row is either a <code>HeaderRow</code> (holds a group like Overdue) or a <code>TaskRow</code> (holds a task). Both are a kind of <code>ListRow</code>, so they fit in one list.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>sealed class ListRow {}</code></dt><dd>"ListRow has only the subclasses in this file." Dart then knows a <code>switch</code> on it covers every case. Add a third kind and the switch in task_list_tab shows an error until you handle it.</dd><dt><code>class HeaderRow extends ListRow</code></dt><dd>HeaderRow <em>is a</em> ListRow, plus its own field.</dd><dt><code>HeaderRow(this.group);</code></dt><dd>Short constructor: "put the argument straight into the <code>group</code> field".</dd></dl></div></article><article class="chunk"><h4>groupedRows(): sort tasks into buckets, then flatten</h4><div class="code"><div class="code-head"><span>app/lib/widgets/grouped_task_list.dart</span><span>lines 18–32</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32</pre><pre class="src"><code class="language-dart">/// Tasks (already sorted by the API) → headers + tasks, groups in fixed order,
+/// a header only when its group has tasks. Order inside a group is kept.
+List&lt;ListRow&gt; groupedRows(List&lt;Task&gt; tasks) {
+  final byGroup = {for (final g in TaskGroup.values) g: &lt;Task&gt;[]};
+  for (final t in tasks) {
+    byGroup[groupOf(t.daysLeft)]!.add(t);
+  }
+  return [
+    for (final g in TaskGroup.values)
+      if (byGroup[g]!.isNotEmpty) ...[
+        HeaderRow(g),
+        for (final t in byGroup[g]!) TaskRow(t),
+      ],
+  ];
+}</code></pre></div></div><div class="note"><ol class="steps"><li>Make an empty bucket for each group: <code>{overdue: [], today: [], tomorrow: [], thisWeek: [], later: []}</code>.</li>
+<li>Put each task into its bucket using <code>groupOf(daysLeft)</code>.</li>
+<li>Walk the groups in order. For each <em>non-empty</em> group, add a header and then its tasks.</li></ol>
+<p>The API already sorted the tasks by due date, so the order inside each bucket is right.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>{for (final g in …) g: &lt;Task&gt;[]}</code></dt><dd>A Map built with a loop: key <code>g</code>, value a new empty list of tasks.</dd><dt><code>byGroup[…]!</code></dt><dd><code>!</code> = "I promise this isn't null". Safe here because every group got a bucket.</dd><dt><code>if (…) ...[ a, b ]</code></dt><dd>Collection-if + spread: only if the condition holds, add <em>all</em> the items of the inner list (<code>...</code> unpacks it).</dd></dl></div></article><article class="chunk"><h4>flatRows(): the Done tab has no headers</h4><div class="code"><div class="code-head"><span>app/lib/widgets/grouped_task_list.dart</span><span>lines 34–35</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">34
+35</pre><pre class="src"><code class="language-dart">/// Done tab: no headers, API order (most recently finished first).
+List&lt;ListRow&gt; flatRows(List&lt;Task&gt; tasks) =&gt; [for (final t in tasks) TaskRow(t)];</code></pre></div></div><div class="note"><p>Every task becomes a <code>TaskRow</code>, in the order the API sent (most recently finished first).</p></div></article></section><section class="file" id="card"><header class="file-head"><div class="eyebrow">Widget · one task in the list</div><h3><code>app/lib/widgets/task_card.dart</code></h3><p class="lead">What one task looks like: a colored strip on the left, the title, "CSC452 · Due today", a type chip and a checkbox. It's a <strong>StatelessWidget</strong>: it has no memory and just draws what it's given.</p></header><div class="tree-box"><div class="terms-label">Widget tree (what build() returns)</div><pre class="tree"><span class="w k-s">Card</span>  <span class="tc">rounded surface with margin</span>
+└─ <span class="w k-l">IntrinsicHeight</span>  <span class="tc">lets the strip be exactly as tall as the content</span>
+   └─ <span class="w k-l">Row</span>  <span class="tc">stretch: children fill the full height</span>
+      ├─ <span class="w k-l">Container</span>  <span class="tc">width 4, the urgency color strip</span>
+      └─ <span class="w k-l">Expanded</span>  <span class="tc">takes all remaining width</span>
+         └─ <span class="w k-i">InkWell</span>  <span class="tc">tap → detail screen, plus the ripple</span>
+            └─ <span class="w k-l">Padding</span>
+               └─ <span class="w k-l">Row</span>
+                  ├─ <span class="w k-l">Expanded</span>
+                  │  └─ <span class="w k-l">Column</span>
+                  │     ├─ <span class="w k-c">Text</span>  <span class="tc">title (max 2 lines, …)</span>
+                  │     ├─ <span class="w k-l">SizedBox</span>  <span class="tc">4px gap</span>
+                  │     └─ <span class="w k-c">Text</span>  <span class="tc">"CSC452 · Due today" in urgency color</span>
+                  ├─ <span class="w k-l">SizedBox</span>  <span class="tc">8px gap</span>
+                  ├─ <span class="w k-c">TypeChip</span>  <span class="tc">Quiz / Assignment / Exam</span>
+                  └─ <span class="w k-l">SizedBox</span> 48×48
+                     └─ <span class="w k-i">Checkbox</span>  <span class="tc">or a small spinner while busy</span></pre></div><article class="chunk"><h4>Inputs: the task, busy, and two functions</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_card.dart</span><span>lines 9–21</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre><pre class="src"><code class="language-dart">class TaskCard extends StatelessWidget {
+  final Task task;
+  final bool busy; // a done/undo request for this task is running
+  final ValueChanged&lt;bool&gt; onToggleDone;
+  final VoidCallback? onTap; // opens S5 detail
+
+  const TaskCard({
+    super.key,
+    required this.task,
+    required this.onToggleDone,
+    this.busy = false,
+    this.onTap,
+  });</code></pre></div></div><div class="note"><p>The card gets <strong>functions</strong> instead of the API. When the checkbox is tapped, it calls <code>onToggleDone(true)</code> and the parent (TaskListTab) decides what to do. This is called <em>lifting state up</em>: the parent owns the data, children only show it and report taps.</p>
+<p>It also makes the card easy to test: give it a fake task and check what it draws.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>ValueChanged&lt;bool&gt;</code></dt><dd>Flutter's name for "a function that takes a bool and returns nothing".</dd><dt><code>VoidCallback?</code></dt><dd>"A function with no arguments that returns nothing", or null (then tapping does nothing).</dd><dt><code>this.busy = false</code></dt><dd>Optional parameter with a default value.</dd></dl></div></article><article class="chunk"><h4>typeLabel(): 'quiz' → 'Quiz'</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_card.dart</span><span>lines 23–28</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">23
+24
+25
+26
+27
+28</pre><pre class="src"><code class="language-dart">static String typeLabel(String type) =&gt; switch (type) {
+      'assignment' =&gt; 'Assignment',
+      'quiz' =&gt; 'Quiz',
+      'exam' =&gt; 'Exam',
+      _ =&gt; type,
+    };</code></pre></div></div><div class="note"><p>The API sends lowercase words, and the screen shows nice labels. Any unknown type is shown as it came.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>static</code></dt><dd>Belongs to the class, not to one card. Called as <code>TaskCard.typeLabel('quiz')</code> (TypeChip below does that).</dd></dl></div></article><article class="chunk"><h4>Work out the color and the 'when' text first</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_card.dart</span><span>lines 30–34</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">30
+31
+32
+33
+34</pre><pre class="src"><code class="language-dart">@override
+Widget build(BuildContext context) {
+  final theme = Theme.of(context);
+  final color = urgencyColor(urgencyOf(task.daysLeft, task.done), theme.colorScheme);
+  final when = task.done ? 'Due ${formatDue(task.dueDate)}' : dueLabel(task.daysLeft);</code></pre></div></div><div class="note"><p>Before drawing, prepare two values:</p>
+<ul><li><code>color</code>: red / orange / green / grey from <code>days_left</code> (see urgency.dart).</li>
+<li><code>when</code>: done tasks show the date ("Due Sat 28 Nov"); open tasks show "2 days overdue", "Tomorrow"…</li></ul>
+<p><code>Theme.of(context)</code> gets the app's theme: its colors (<code>colorScheme</code>) and text styles (<code>textTheme</code>). Using it means dark mode just works.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>'Due ${formatDue(task.dueDate)}'</code></dt><dd>String interpolation: <code>${ … }</code> puts the result of code into the text. For a plain variable, <code>$name</code> is enough.</dd></dl></div></article><article class="chunk"><h4>The outer shape: card + color strip</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_card.dart</span><span>lines 36–43</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">36
+37
+38
+39
+40
+41
+42
+43</pre><pre class="src"><code class="language-dart">return Card(
+  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+  clipBehavior: Clip.antiAlias,
+  child: IntrinsicHeight(
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(width: 4, color: color),</code></pre></div></div><div class="note"><p><span class="w k-s">Card</span> gives the rounded, raised surface. <code>margin</code> is the space <em>outside</em> it (16 left/right, 4 top/bottom). <code>clipBehavior: Clip.antiAlias</code> cuts the strip to the card's rounded corners.</p>
+<p><span class="w k-l">Row</span> puts children <strong>side by side</strong>. <code>crossAxisAlignment: stretch</code> makes them all as tall as the row. That's how the 4px <span class="w k-l">Container</span> becomes a full-height strip. A Row with stretch needs to know its height, and <span class="w k-l">IntrinsicHeight</span> provides it by measuring the content first.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>EdgeInsets.symmetric(horizontal: 16, vertical: 4)</code></dt><dd>Spacing: same on left+right, same on top+bottom. Also: <code>.all(24)</code>, <code>.only(bottom: 88)</code>, <code>.fromLTRB(left, top, right, bottom)</code>.</dd><dt><code>Container(width: 4, color: color)</code></dt><dd>The simplest box: a size and a fill color.</dd></dl></div></article><article class="chunk"><h4>The middle: title and subtitle</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_card.dart</span><span>lines 44–73</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73</pre><pre class="src"><code class="language-dart">// Not a ListTile: its fixed height clipped the subtitle when a title wrapped.
+Expanded(
+  child: InkWell(
+    onTap: onTap,
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  task.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    decoration: task.done ? TextDecoration.lineThrough : null,
+                    color: task.done ? theme.colorScheme.onSurfaceVariant : null,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${task.courseCode} · $when',
+                  style: theme.textTheme.bodyMedium?.copyWith(color: color),
+                ),
+              ],
+            ),
+          ),</code></pre></div></div><div class="note"><p><span class="w k-l">Expanded</span> = "take all the leftover width in this Row". Without it, a long title would push the checkbox off the screen (yellow-black overflow stripes).</p>
+<p><span class="w k-i">InkWell</span> makes its child tappable and draws the ripple. <span class="w k-l">Column</span> stacks children <strong>top to bottom</strong>: title, a 4px <span class="w k-l">SizedBox</span> gap, subtitle.</p>
+<p>The comment on line 44 records a real bug: ListTile has a fixed height and cut off the subtitle when the title wrapped to two lines.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>Row vs Column</code></dt><dd>Row = horizontal, Column = vertical. <em>Main axis</em> = the direction they line up in; <em>cross axis</em> = the other one.</dd><dt><code>crossAxisAlignment: start</code></dt><dd>In a Column: line children up on the left.</dd><dt><code>mainAxisSize: MainAxisSize.min</code></dt><dd>Column is only as tall as its children (by default it tries to be as tall as possible).</dd><dt><code>maxLines: 2, overflow: ellipsis</code></dt><dd>At most 2 lines, then "…".</dd><dt><code>textTheme.titleMedium?.copyWith(…)</code></dt><dd>Take the theme's style and change a few things. <code>?.</code> = only call it if the style isn't null.</dd><dt><code>cond ? TextDecoration.lineThrough : null</code></dt><dd>Strike through done tasks. <code>null</code> means "keep the default".</dd></dl></div></article><article class="chunk"><h4>The right side: chip, then checkbox or spinner</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_card.dart</span><span>lines 74–90</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90</pre><pre class="src"><code class="language-dart">const SizedBox(width: 8),
+TypeChip(type: task.type, compact: true),
+SizedBox(
+  width: 48,
+  height: 48,
+  child: busy
+      ? const Padding(
+          padding: EdgeInsets.all(14),
+          child: CircularProgressIndicator(strokeWidth: 2),
+        )
+      : Checkbox(
+          value: task.done,
+          semanticLabel:
+              task.done ? 'Mark as not done' : 'Mark as done',
+          onChanged: (v) =&gt; onToggleDone(v ?? false),
+        ),
+),</code></pre></div></div><div class="note"><p>The checkbox sits in a fixed 48×48 <span class="w k-l">SizedBox</span>. When <code>busy</code>, a small spinner takes its place, and the box size stays the same so nothing jumps.</p>
+<p><span class="w k-i">Checkbox</span> doesn't change itself. It shows <code>value: task.done</code>, and on tap calls <code>onChanged</code> with the new value. We pass that up, the server saves it, the list reloads, and the checkbox then shows the new value.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>busy ? A : B</code></dt><dd>Choose which widget to show.</dd><dt><code>v ?? false</code></dt><dd>Checkbox gives a <code>bool?</code> (it can be null in a three-state mode). <code>?? false</code> turns null into false.</dd><dt><code>semanticLabel</code></dt><dd>What a screen reader says for this checkbox.</dd></dl></div></article><article class="chunk"><h4>TypeChip: the small label</h4><div class="code"><div class="code-head"><span>app/lib/widgets/task_card.dart</span><span>lines 103–126</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126</pre><pre class="src"><code class="language-dart">/// The "Quiz" / "Assignment" / "Exam" label. Flutter's [Chip] tells screen readers it is a
+/// checkbox (found in the web check, Step 9), so its own semantics are replaced by plain text.
+class TypeChip extends StatelessWidget {
+  final String type;
+  final bool compact;
+
+  const TypeChip({super.key, required this.type, this.compact = false});
+
+  @override
+  Widget build(BuildContext context) {
+    final label = TaskCard.typeLabel(type);
+    return Semantics(
+      container: true, // its own node, read as plain text
+      label: label,
+      excludeSemantics: true,
+      child: Chip(
+        label: Text(label),
+        labelStyle: compact ? Theme.of(context).textTheme.labelSmall : null,
+        visualDensity: compact ? VisualDensity.compact : null,
+        padding: compact ? EdgeInsets.zero : null,
+      ),
+    );
+  }
+}</code></pre></div></div><div class="note"><p><span class="w k-c">Chip</span> draws the rounded label. In the list, <code>compact: true</code> makes it smaller (small text, tight padding).</p>
+<p><span class="w k-h">Semantics</span> is invisible. It controls what screen readers announce. Flutter's Chip announced itself as a checkbox, which is wrong, so <code>excludeSemantics</code> hides that and <code>label</code> says just "Quiz".</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>compact ? X : null</code></dt><dd><code>null</code> means "use Chip's normal value".</dd></dl></div></article></section><section class="file" id="header"><header class="file-head"><div class="eyebrow">Widget · "OVERDUE", "TODAY" …</div><h3><code>app/lib/widgets/group_header.dart</code></h3><p class="lead">The small colored label above each group. A <span class="w k-l">Padding</span> around a <span class="w k-c">Text</span>, nothing more.</p></header><article class="chunk"><h4>Text in the group's urgency color</h4><div class="code"><div class="code-head"><span>app/lib/widgets/group_header.dart</span><span>lines 6–26</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26</pre><pre class="src"><code class="language-dart">class GroupHeader extends StatelessWidget {
+  final TaskGroup group;
+
+  const GroupHeader({super.key, required this.group});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+      child: Text(
+        group.label.toUpperCase(),
+        style: theme.textTheme.labelLarge?.copyWith(
+          color: urgencyColor(group.headerUrgency, theme.colorScheme),
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.2,
+        ),
+      ),
+    );
+  }
+}</code></pre></div></div><div class="note"><p>It takes the group's label ("Overdue"), makes it uppercase, and styles it: bold, a little letter spacing, colored by the group's urgency. So OVERDUE is red, TODAY and TOMORROW orange, THIS WEEK and LATER green.</p>
+<p><code>fromLTRB(24, 16, 24, 8)</code>: more space above (16) than below (8), so the header sits closer to its own tasks.</p></div></article></section><section class="file" id="empty"><header class="file-head"><div class="eyebrow">Widget · big icon + one line</div><h3><code>app/lib/widgets/empty_state.dart</code></h3><p class="lead">Used for the empty tabs and the "couldn't load" message.</p></header><article class="chunk"><h4>Center → Padding → Column(icon, gap, text)</h4><div class="code"><div class="code-head"><span>app/lib/widgets/empty_state.dart</span><span>lines 4–34</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34</pre><pre class="src"><code class="language-dart">class EmptyState extends StatelessWidget {
+  final IconData icon;
+  final String text;
+
+  const EmptyState({super.key, required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 64, color: colors.outline),
+            const SizedBox(height: 16),
+            Text(
+              text,
+              textAlign: TextAlign.center,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(color: colors.onSurfaceVariant),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}</code></pre></div></div><div class="note"><p><span class="w k-l">Center</span> puts its child in the middle. The <span class="w k-l">Column</span> uses <code>mainAxisSize: min</code>, so it's only as tall as icon + gap + text, and Center can then really center it.</p>
+<p>Colors come from <code>colorScheme</code> (<code>outline</code>, <code>onSurfaceVariant</code>): soft greys that also work in dark mode. The project rule is to never hard-code colors here (D-32).</p></div></article></section>
+
+<h2 class="group-title" id="g-logic">Rules, models, API calls</h2>
+<p class="sub">No widgets here. This is the logic and data the widgets use.</p>
+<section class="file" id="urgency"><header class="file-head"><div class="eyebrow">Rules · colors, groups and labels</div><h3><code>app/lib/utils/urgency.dart</code></h3><p class="lead">Turns <code>days_left</code> (a number from the API) into everything the user sees: which color, which group, which text. The app <strong>never computes days itself</strong>. The server does, using Bangkok time.</p></header><article class="chunk"><h4>Urgency: four levels</h4><div class="code"><div class="code-head"><span>app/lib/utils/urgency.dart</span><span>lines 6–14</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">6
+7
+8
+9
+10
+11
+12
+13
+14</pre><pre class="src"><code class="language-dart">enum Urgency { overdue, soon, later, done }
+
+/// overdue &lt; 0 · soon 0–2 · later ≥ 3 · done wins over everything.
+Urgency urgencyOf(int daysLeft, bool done) {
+  if (done) return Urgency.done;
+  if (daysLeft &lt; 0) return Urgency.overdue;
+  if (daysLeft &lt;= 2) return Urgency.soon;
+  return Urgency.later;
+}</code></pre></div></div><div class="note"><table class="mini"><tr><th>days_left</th><th>Urgency</th><th>Color</th></tr>
+<tr><td>any, but done</td><td>done</td><td><span class="dot" style="background:var(--muted)"></span> grey</td></tr>
+<tr><td>&lt; 0</td><td>overdue</td><td><span class="dot" style="background:var(--red)"></span> red</td></tr>
+<tr><td>0 – 2</td><td>soon</td><td><span class="dot" style="background:var(--orange)"></span> orange</td></tr>
+<tr><td>3 or more</td><td>later</td><td><span class="dot" style="background:var(--green)"></span> green</td></tr></table>
+<p>The order of the <code>if</code>s matters: "done" is checked first, so a done task is grey even if it's overdue.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>enum Urgency { overdue, soon, later, done }</code></dt><dd>A fixed set of named values. Safer than strings like "soon" because typos become errors.</dd></dl></div></article><article class="chunk"><h4>urgencyColor(): the only hard-coded colors in the app</h4><div class="code"><div class="code-head"><span>app/lib/utils/urgency.dart</span><span>lines 16–26</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26</pre><pre class="src"><code class="language-dart">/// The only hard-coded colors in the app (§6.1), with light + dark variants
+/// so labels stay readable on both backgrounds.
+Color urgencyColor(Urgency urgency, ColorScheme colors) {
+  final dark = colors.brightness == Brightness.dark;
+  return switch (urgency) {
+    Urgency.overdue =&gt; dark ? Colors.red.shade300 : Colors.red.shade700,
+    Urgency.soon =&gt; dark ? Colors.orange.shade300 : Colors.orange.shade800,
+    Urgency.later =&gt; dark ? Colors.green.shade300 : Colors.green.shade700,
+    Urgency.done =&gt; colors.outline,
+  };
+}</code></pre></div></div><div class="note"><p>Each urgency has a darker shade for light mode and a lighter shade for dark mode, so the text stays readable on both backgrounds.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>Colors.red.shade700</code></dt><dd>Material's red palette: 50 (palest) … 900 (darkest).</dd></dl></div></article><article class="chunk"><h4>TaskGroup: the five groups, and which one a task goes in</h4><div class="code"><div class="code-head"><span>app/lib/utils/urgency.dart</span><span>lines 28–49</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49</pre><pre class="src"><code class="language-dart">/// Day groups for the This Week / All lists, in display order.
+enum TaskGroup {
+  overdue('Overdue', Urgency.overdue),
+  today('Today', Urgency.soon),
+  tomorrow('Tomorrow', Urgency.soon),
+  thisWeek('This week', Urgency.later),
+  later('Later', Urgency.later);
+
+  final String label;
+  final Urgency headerUrgency; // color of the group header
+
+  const TaskGroup(this.label, this.headerUrgency);
+}
+
+/// &lt;0 Overdue · 0 Today · 1 Tomorrow · 2–7 This week · &gt;7 Later
+TaskGroup groupOf(int daysLeft) {
+  if (daysLeft &lt; 0) return TaskGroup.overdue;
+  if (daysLeft == 0) return TaskGroup.today;
+  if (daysLeft == 1) return TaskGroup.tomorrow;
+  if (daysLeft &lt;= 7) return TaskGroup.thisWeek;
+  return TaskGroup.later;
+}</code></pre></div></div><div class="note"><p>An <strong>enhanced enum</strong>: each value carries extra data, a label to show and the urgency used to color its header. The order they're written in is the order on screen.</p>
+<p><code>groupOf</code>: &lt;0 Overdue · 0 Today · 1 Tomorrow · 2–7 This week · &gt;7 Later.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>today('Today', Urgency.soon)</code></dt><dd>Creates the enum value <code>today</code> by calling the enum's constructor (line 39) with these two values.</dd></dl></div></article><article class="chunk"><h4>Label helpers</h4><div class="code"><div class="code-head"><span>app/lib/utils/urgency.dart</span><span>lines 51–65</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65</pre><pre class="src"><code class="language-dart">/// D-20: everyone who finished, including me.
+String doneCountText(int count) =&gt; switch (count) {
+      0 =&gt; 'Nobody has finished this yet',
+      1 =&gt; '1 classmate finished this',
+      _ =&gt; '$count classmates finished this',
+    };
+
+/// -3 → "3 days overdue" · -1 → "1 day overdue" · 0 → "Due today" · 1 → "Tomorrow" · n → "In n days"
+String dueLabel(int daysLeft) {
+  if (daysLeft == -1) return '1 day overdue';
+  if (daysLeft &lt; 0) return '${-daysLeft} days overdue';
+  if (daysLeft == 0) return 'Due today';
+  if (daysLeft == 1) return 'Tomorrow';
+  return 'In $daysLeft days';
+}</code></pre></div></div><div class="note"><p><code>dueLabel</code> makes the subtitle text. <code>-daysLeft</code> flips the sign: −3 becomes "3 days overdue". <code>doneCountText</code> is used on the detail screen ("3 classmates finished this").</p></div></article></section><section class="file" id="models"><header class="file-head"><div class="eyebrow">Model · what a task looks like in Dart</div><h3><code>app/lib/models/task.dart</code></h3><p class="lead">The API sends JSON (a Map of strings). A model class turns it into a typed Dart object, so you can write <code>task.title</code> and get autocomplete and type checks.</p></header><article class="chunk"><h4>The fields</h4><div class="code"><div class="code-head"><span>app/lib/models/task.dart</span><span>lines 30–63</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63</pre><pre class="src"><code class="language-dart">class Task {
+  final int id;
+  final String title;
+  final String type; // assignment | exam | quiz
+  final String dueDate;
+  final int courseId;
+  final String courseCode;
+  final String courseName;
+  final bool done;
+  final int daysLeft;
+
+  // Detail only
+  final String? description;
+  final int? createdBy;
+  final String? creatorName;
+  final bool? isOwner;
+  final int? doneCount;
+
+  const Task({
+    required this.id,
+    required this.title,
+    required this.type,
+    required this.dueDate,
+    required this.courseId,
+    required this.courseCode,
+    required this.courseName,
+    required this.done,
+    required this.daysLeft,
+    this.description,
+    this.createdBy,
+    this.creatorName,
+    this.isOwner,
+    this.doneCount,
+  });</code></pre></div></div><div class="note"><p>The top group is in every task. The "Detail only" fields come only from <code>GET /tasks/:id</code>, so they're nullable (<code>?</code>) and stay null in the list.</p>
+<p>Names are camelCase in Dart (<code>dueDate</code>) but snake_case in JSON (<code>due_date</code>). <code>dueDate</code> stays a <code>"2026-11-28"</code> string, so the phone's time zone can never shift the day.</p></div></article><article class="chunk"><h4>fromJson: JSON map → Task</h4><div class="code"><div class="code-head"><span>app/lib/models/task.dart</span><span>lines 65–82</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82</pre><pre class="src"><code class="language-dart">factory Task.fromJson(Map&lt;String, dynamic&gt; json) {
+  return Task(
+    id: json['id'] as int,
+    title: json['title'] as String,
+    type: json['type'] as String,
+    dueDate: json['due_date'] as String,
+    courseId: json['course_id'] as int,
+    courseCode: json['course_code'] as String,
+    courseName: json['course_name'] as String,
+    done: json['done'] as bool,
+    daysLeft: json['days_left'] as int,
+    description: json['description'] as String?,
+    createdBy: json['created_by'] as int?,
+    creatorName: json['creator_name'] as String?,
+    isOwner: json['is_owner'] as bool?,
+    doneCount: json['done_count'] as int?,
+  );
+}</code></pre></div></div><div class="note"><p>A <strong>factory constructor</strong> that reads each key and checks its type. If the server ever sent a wrong type, <code>as int</code> throws, and ApiService turns that into a friendly error.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>factory Task.fromJson(…)</code></dt><dd>A named constructor that can run code before returning the object. Called as <code>Task.fromJson(map)</code>.</dd><dt><code>Map&lt;String, dynamic&gt;</code></dt><dd>JSON object: string keys, values of any type.</dd><dt><code>json['id'] as int</code></dt><dd>"Treat this value as an int, and fail if it isn't one."</dd><dt><code>as String?</code></dt><dd>Same, but null is allowed.</dd></dl></div></article><article class="chunk"><h4>TaskInput (used by the add/edit form, Member 3)</h4><div class="code"><div class="code-head"><span>app/lib/models/task.dart</span><span>lines 1–24</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24</pre><pre class="src"><code class="language-dart">/// Body of `POST /tasks` and `PUT /tasks/:id` (SPEC §4.2 TaskInput).
+class TaskInput {
+  final String title;
+  final int courseId;
+  final String type;
+  final String dueDate;
+  final String? description;
+
+  const TaskInput({
+    required this.title,
+    required this.courseId,
+    required this.type,
+    required this.dueDate,
+    this.description,
+  });
+
+  Map&lt;String, dynamic&gt; toJson() =&gt; {
+        'title': title.trim(),
+        'course_id': courseId,
+        'type': type,
+        'due_date': dueDate,
+        'description': description?.trim(),
+      };
+}</code></pre></div></div><div class="note"><p>The opposite direction: Dart object → JSON for <code>POST</code>/<code>PUT</code>. <code>toJson()</code> also trims spaces off the title. It's in your <code>models/</code> folder, but the form screen uses it.</p></div></article></section><article class="chunk"><h4>models/course.dart and models/user.dart</h4><div class="code"><div class="code-head"><span>app/lib/models/course.dart</span><span>lines 1–16</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16</pre><pre class="src"><code class="language-dart">/// One row of `GET /courses` (SPEC §4.2).
+class Course {
+  final int id;
+  final String code;
+  final String name;
+
+  const Course({required this.id, required this.code, required this.name});
+
+  factory Course.fromJson(Map&lt;String, dynamic&gt; json) {
+    return Course(
+      id: json['id'] as int,
+      code: json['code'] as String,
+      name: json['name'] as String,
+    );
+  }
+}</code></pre></div></div><div class="note"><p>Same pattern, smaller. <code>User</code> is in the same shape: <code>id</code>, <code>name</code> and an optional <code>email</code> (the <code>/me</code> reply has no email).</p></div></article><section class="file" id="api"><header class="file-head"><div class="eyebrow">Service · every HTTP call goes through here</div><h3><code>app/lib/services/api_service.dart</code></h3><p class="lead">Screens never use <code>http</code> directly. They call <code>api.getTasks('week')</code> and get back a <code>List&lt;Task&gt;</code> or an <code>ApiException</code>. Your parts are <code>getTasks</code>, <code>setDone</code> and the plumbing they use.</p></header><article class="chunk"><h4>ApiException: one error type for everything</h4><div class="code"><div class="code-head"><span>app/lib/services/api_service.dart</span><span>lines 12–26</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26</pre><pre class="src"><code class="language-dart">/// Any failed API call. [status] is the HTTP status, or 0 when the server
+/// couldn't be reached (no internet, timeout, unreadable reply).
+class ApiException implements Exception {
+  final int status;
+  final String message;
+
+  const ApiException(this.status, this.message);
+
+  static const genericMessage = 'Something went wrong. Pull to retry.';
+
+  bool get isNetwork =&gt; status == 0;
+
+  @override
+  String toString() =&gt; 'ApiException($status, $message)';
+}</code></pre></div></div><div class="note"><p>Wrong password, server down, no internet: all become an <code>ApiException</code> with a status and a message ready to show. <code>status 0</code> means the server couldn't be reached.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>implements Exception</code></dt><dd>Marks it as something you can <code>throw</code> and <code>catch</code>.</dd><dt><code>bool get isNetwork => status == 0;</code></dt><dd>A getter: <code>e.isNetwork</code> is true for network problems.</dd></dl></div></article><article class="chunk"><h4>Constructor with defaults</h4><div class="code"><div class="code-head"><span>app/lib/services/api_service.dart</span><span>lines 30–38</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">30
+31
+32
+33
+34
+35
+36
+37
+38</pre><pre class="src"><code class="language-dart">class ApiService {
+  final http.Client _client;
+  final String _base;
+  final Duration _timeout;
+
+  ApiService({http.Client? client, String? baseUrl, Duration? timeout})
+      : _client = client ?? http.Client(),
+        _base = baseUrl ?? apiBase,
+        _timeout = timeout ?? const Duration(seconds: 10);</code></pre></div></div><div class="note"><p>Everything is optional: the real app uses the real http client, the URL from config.dart and a 10-second timeout. Tests swap in a fake client.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>: _client = …, _base = …</code></dt><dd>An <strong>initializer list</strong>: sets the final fields before the object exists.</dd></dl></div></article><article class="chunk"><h4>getTasks() and setDone(): your two calls</h4><div class="code"><div class="code-head"><span>app/lib/services/api_service.dart</span><span>lines 69–82</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82</pre><pre class="src"><code class="language-dart">/// `GET /tasks?filter=week|all|done`, already sorted by the API (SPEC §4.3).
+Future&lt;List&lt;Task&gt;&gt; getTasks(String filter) async {
+  final data = await _send('GET', '/tasks?filter=$filter');
+  return _parse(() =&gt; [
+        for (final j in data as List) Task.fromJson(j as Map&lt;String, dynamic&gt;),
+      ]);
+}
+
+/// Marks a task done (POST) or not done (DELETE) for me. Idempotent on the server (D-16).
+/// Returns the new done count (D-20).
+Future&lt;int&gt; setDone(int taskId, bool done) async {
+  final data = await _send(done ? 'POST' : 'DELETE', '/tasks/$taskId/done');
+  return _parse(() =&gt; data['done_count'] as int);
+}</code></pre></div></div><div class="note"><p><code>getTasks</code>: <code>GET /tasks?filter=week</code> → a JSON list → each item through <code>Task.fromJson</code>.</p>
+<p><code>setDone</code>: tick → <code>POST /tasks/12/done</code>; untick → <code>DELETE /tasks/12/done</code>. Same URL, and the HTTP method says which one.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>done ? 'POST' : 'DELETE'</code></dt><dd>Pick the HTTP method from the bool.</dd><dt><code>[for (final j in data as List) Task.fromJson(…)]</code></dt><dd>Collection-for again: one Task per JSON item.</dd></dl></div></article><article class="chunk"><h4>_parse(): turn a weird reply into a normal error</h4><div class="code"><div class="code-head"><span>app/lib/services/api_service.dart</span><span>lines 122–132</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132</pre><pre class="src"><code class="language-dart">/// A reply with an unexpected shape (missing field, wrong type) becomes a normal
+/// [ApiException], so screens show "Something went wrong" instead of spinning forever.
+T _parse&lt;T&gt;(T Function() read) {
+  try {
+    return read();
+  } on TypeError {
+    throw const ApiException(0, ApiException.genericMessage);
+  } on NoSuchMethodError {
+    throw const ApiException(0, ApiException.genericMessage);
+  }
+}</code></pre></div></div><div class="note"><p>If the JSON has the wrong shape, <code>fromJson</code> throws a TypeError. Without this, the screen would spin forever. With it, the user sees "Something went wrong".</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>T _parse&lt;T&gt;(T Function() read)</code></dt><dd>A <strong>generic</strong> function: works for any return type <code>T</code> (a Task, a List, an int). It takes a function, runs it, and catches errors.</dd></dl></div></article><article class="chunk"><h4>_send(), part 1: build the request</h4><div class="code"><div class="code-head"><span>app/lib/services/api_service.dart</span><span>lines 136–144</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">136
+137
+138
+139
+140
+141
+142
+143
+144</pre><pre class="src"><code class="language-dart">Future&lt;dynamic&gt; _send(String method, String path, [Object? body]) async {
+  final request = http.Request(method, Uri.parse('$_base$path'));
+  request.headers['Accept'] = 'application/json';
+  if (body != null) {
+    request.headers['Content-Type'] = 'application/json';
+    request.body = jsonEncode(body);
+  }
+  final token = Session.token;
+  if (token != null) request.headers['Authorization'] = 'Bearer $token';</code></pre></div></div><div class="note"><p>Full URL = base + path. Headers say "I accept JSON", "I'm sending JSON" (only when there's a body), and <code>Authorization: Bearer &lt;token&gt;</code> when logged in. The server reads the user id from that token, never from the body.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>[Object? body]</code></dt><dd>Square brackets = an optional <em>positional</em> parameter (GET has no body).</dd></dl></div></article><article class="chunk"><h4>_send(), part 2: send it, with a timeout</h4><div class="code"><div class="code-head"><span>app/lib/services/api_service.dart</span><span>lines 146–154</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">146
+147
+148
+149
+150
+151
+152
+153
+154</pre><pre class="src"><code class="language-dart">final http.Response response;
+try {
+  final streamed = await _client.send(request).timeout(_timeout);
+  response = await http.Response.fromStream(streamed).timeout(_timeout);
+} on TimeoutException {
+  throw const ApiException(0, ApiException.genericMessage);
+} on http.ClientException {
+  throw const ApiException(0, ApiException.genericMessage);
+}</code></pre></div></div><div class="note"><p>No answer in 10 seconds, or no connection at all? Throw <code>ApiException(0, …)</code>.</p></div></article><article class="chunk"><h4>_send(), part 3: read the reply</h4><div class="code"><div class="code-head"><span>app/lib/services/api_service.dart</span><span>lines 156–171</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171</pre><pre class="src"><code class="language-dart">if (response.statusCode == 204) return null;
+
+dynamic data;
+try {
+  data = jsonDecode(utf8.decode(response.bodyBytes));
+} on FormatException {
+  // Not JSON (e.g. a proxy error page).
+  throw ApiException(response.statusCode, ApiException.genericMessage);
+}
+
+if (response.statusCode &gt;= 200 &amp;&amp; response.statusCode &lt; 300) return data;
+
+final message = (data is Map &amp;&amp; data['error'] is String)
+    ? data['error'] as String
+    : ApiException.genericMessage;
+throw ApiException(response.statusCode, message);</code></pre></div></div><div class="note"><p>204 means no body, so return null. Otherwise decode the JSON. Status 2xx means success, so return the data. Anything else becomes an <code>ApiException</code> with the server's <code>error</code> message.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>utf8.decode(response.bodyBytes)</code></dt><dd>Decode bytes as UTF-8, so Thai text and emoji come out right.</dd></dl></div></article></section><section class="file" id="config"><header class="file-head"><div class="eyebrow">Setting · where the API is</div><h3><code>app/lib/config.dart</code></h3><p class="lead">One constant: the API's web address.</p></header><article class="chunk"><h4>apiBase</h4><div class="code"><div class="code-head"><span>app/lib/config.dart</span><span>lines 1–7</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">1
+2
+3
+4
+5
+6
+7</pre><pre class="src"><code class="language-dart">/// API base URL (D-43). Defaults to the live Vercel API (D-42).
+/// Local API on the Android emulator:
+///   flutter run --dart-define=API_BASE=http://10.0.2.2:3000
+const String apiBase = String.fromEnvironment(
+  'API_BASE',
+  defaultValue: 'https://duesoon-api.vercel.app',
+);</code></pre></div></div><div class="note"><p>By default the live Vercel API. <code>String.fromEnvironment</code> lets you change it at build time without editing code: <code>flutter run --dart-define=API_BASE=…</code>.</p></div></article></section>
+
+<section class="block" id="flow" style="margin-top:72px">
+  <h2>Flow: ticking a task as done</h2>
+  <p class="sub">One tap, from the checkbox to the database and back. A good thing to walk through in the demo.</p>
+  <ol class="flow"><li><div><b>You tap the checkbox</b><span>Checkbox calls <code>onChanged(true)</code> → the card calls <code>onToggleDone(true)</code></span><br><span class="ref">task_card.dart:88</span></div></li><li><div><b>The tab takes over</b><span><code>_toggleDone</code> adds the id to <code>_busy</code> and calls setState, so the spinner appears</span><br><span class="ref">task_list_tab.dart:51–53</span></div></li><li><div><b>HTTP request</b><span><code>setDone</code> sends <code>POST /tasks/12/done</code> with the Bearer token</span><br><span class="ref">api_service.dart:79–80</span></div></li><li><div><b>Server route</b><span>Gets the user from the token and calls <code>markDone(me, 12)</code></span><br><span class="ref">routes/tasks.js:89–93</span></div></li><li><div><b>Database</b><span><code>upsert</code> adds a row to <code>task_done</code></span><br><span class="ref">repos/tasks.js:114–126</span></div></li><li><div><b>Reply</b><span><code>{ "done": true, "done_count": 3 }</code></span></div></li><li><div><b>Reload</b><span><code>_load()</code> → <code>GET /tasks?filter=week</code>. The task is gone from This Week (week hides tasks I finished)</span><br><span class="ref">task_list_tab.dart:56</span></div></li><li><div><b>Redraw</b><span>setState with the new list; <code>finally</code> removes the id from <code>_busy</code></span><br><span class="ref">task_list_tab.dart:59–61</span></div></li></ol>
+</section>
+
+<h2 class="group-title" id="g-backend">Your backend files</h2>
+<p class="sub">The server side of the list and the checkbox. Shorter notes; the Flutter part is the focus.</p>
+<section class="file" id="routes"><header class="file-head"><div class="eyebrow">Express routes · the URLs your screens call</div><h3><code>api/src/routes/tasks.js</code></h3><p class="lead">Only your routes: the list and done/undo. Every route here runs <em>after</em> the token check, so <code>req.user.id</code> is always the logged-in student.</p></header><article class="chunk"><h4>GET /tasks?filter=…</h4><div class="code"><div class="code-head"><span>api/src/routes/tasks.js</span><span>lines 34–41</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">34
+35
+36
+37
+38
+39
+40
+41</pre><pre class="src"><code class="language-javascript">// GET /tasks?filter=week|all|done
+router.get("/", async (req, res) =&gt; {
+  const filter = req.query.filter ?? "all";
+  if (!tasks.FILTERS.includes(filter)) {
+    return res.status(400).json({ error: "filter must be week, all or done" });
+  }
+  res.json(await tasks.listTasks({ me: req.user.id, today: todayBangkok(), filter }));
+});</code></pre></div></div><div class="note"><p>Read the filter (default <code>all</code>), reject anything unknown with 400, otherwise ask the repo for the list and send it as JSON.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>router.get('/', async (req, res) => …)</code></dt><dd>"When a GET comes to this path, run this function." <code>req</code> = the request, <code>res</code> = the reply you build.</dd><dt><code>req.query.filter</code></dt><dd>The <code>?filter=week</code> part of the URL.</dd><dt><code>res.status(400).json({ error })</code></dt><dd>Reply with status 400 and a JSON body.</dd></dl></div></article><article class="chunk"><h4>POST and DELETE /tasks/:id/done</h4><div class="code"><div class="code-head"><span>api/src/routes/tasks.js</span><span>lines 88–103</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103</pre><pre class="src"><code class="language-javascript">// POST /tasks/:id/done (any user, only for themselves)
+router.post("/:id/done", async (req, res) =&gt; {
+  const id = taskId(req, res);
+  if (id === null) return;
+  if (!(await tasks.markDone(req.user.id, id))) return notFound(res);
+  res.json({ done: true, done_count: await tasks.countDone(id) });
+});
+
+// DELETE /tasks/:id/done
+router.delete("/:id/done", async (req, res) =&gt; {
+  const id = taskId(req, res);
+  if (id === null) return;
+  if (!(await tasks.findTaskOwner(id))) return notFound(res);
+  await tasks.unmarkDone(req.user.id, id);
+  res.json({ done: false, done_count: await tasks.countDone(id) });
+});</code></pre></div></div><div class="note"><p>POST marks done, DELETE un-marks. Both are <strong>idempotent</strong>: doing it twice gives the same result as once, so a double tap or a retry can't break anything. Both reply with the new <code>done_count</code>.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>req.params.id</code></dt><dd>The <code>:id</code> part of the path, e.g. <code>12</code> in <code>/tasks/12/done</code>.</dd></dl></div></article></section><section class="file" id="repo"><header class="file-head"><div class="eyebrow">Database code (Prisma) · the queries</div><h3><code>api/src/repos/tasks.js</code></h3><p class="lead">All database calls live in repos. Prisma writes the SQL for you: <code>findMany</code> = SELECT, <code>upsert</code> = INSERT … ON CONFLICT.</p></header><article class="chunk"><h4>toTaskListItem(): database row → API JSON</h4><div class="code"><div class="code-head"><span>api/src/repos/tasks.js</span><span>lines 7–20</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20</pre><pre class="src"><code class="language-javascript">function toTaskListItem(t, today) {
+  const dueDate = toDateStr(t.dueDate);
+  return {
+    id: t.id,
+    title: t.title,
+    type: t.type,
+    due_date: dueDate,
+    course_id: t.courseId,
+    course_code: t.course.code,
+    course_name: t.course.name,
+    done: t.done.length &gt; 0, // `done` was loaded filtered to the current user only
+    days_left: daysBetween(today, dueDate),
+  };
+}</code></pre></div></div><div class="note"><p>Converts camelCase → snake_case, the Date → <code>"YYYY-MM-DD"</code>, and computes <code>days_left</code> from Bangkok "today". <code>done</code> is true if <em>this</em> student has a row in task_done.</p></div></article><article class="chunk"><h4>listTasks(): the three filters</h4><div class="code"><div class="code-head"><span>api/src/repos/tasks.js</span><span>lines 34–57</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57</pre><pre class="src"><code class="language-javascript">const FILTERS = ["week", "all", "done"];
+
+/** Task list for user `me` (SPEC §4.3). */
+async function listTasks({ me, today, filter }) {
+  let where = {};
+  if (filter === "week") {
+    // Not done by me AND due on or before today + 7 (includes every overdue task).
+    where = { dueDate: { lte: fromDateStr(addDays(today, 7)) }, done: { none: { userId: me } } };
+  } else if (filter === "done") {
+    where = { done: { some: { userId: me } } };
+  }
+
+  const tasks = await prisma.task.findMany({
+    where,
+    include: { course: true, done: { where: { userId: me } } },
+    orderBy: [{ dueDate: "asc" }, { id: "asc" }],
+  });
+
+  if (filter === "done") {
+    // Most recently finished first (Prisma can't order by a filtered relation's field).
+    tasks.sort((a, b) =&gt; b.done[0].doneAt - a.done[0].doneAt || b.id - a.id);
+  }
+  return tasks.map((t) =&gt; toTaskListItem(t, today));
+}</code></pre></div></div><div class="note"><table class="mini"><tr><th>filter</th><th>Which tasks</th></tr>
+<tr><td>week</td><td>Not done by me, and due on or before today + 7 (so overdue ones too)</td></tr>
+<tr><td>all</td><td>Every task</td></tr>
+<tr><td>done</td><td>Done by me, most recently finished first</td></tr></table>
+<p><code>include</code> = JOIN: bring the course, and <em>only my</em> done rows.</p></div><div class="terms"><div class="terms-label">Syntax in this part</div><dl><dt><code>{ none: { userId: me } }</code></dt><dd>"No task_done row for me" → NOT EXISTS in SQL.</dd><dt><code>orderBy: [{ dueDate: 'asc' }, { id: 'asc' }]</code></dt><dd>ORDER BY due_date, id. The id breaks ties, so the order is always the same.</dd></dl></div></article><article class="chunk"><h4>markDone() / unmarkDone()</h4><div class="code"><div class="code-head"><span>api/src/repos/tasks.js</span><span>lines 113–131</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131</pre><pre class="src"><code class="language-javascript">/** Idempotent (D-16). Returns false if the task doesn't exist. */
+async function markDone(me, taskId) {
+  try {
+    await prisma.taskDone.upsert({
+      where: { userId_taskId: { userId: me, taskId } },
+      create: { userId: me, taskId },
+      update: {}, // already done: keep the original done_at
+    });
+    return true;
+  } catch (err) {
+    if (err.code === "P2003") return false; // foreign key: task (or user) doesn't exist
+    throw err;
+  }
+}
+
+/** Idempotent: undoing something not done is fine. */
+async function unmarkDone(me, taskId) {
+  await prisma.taskDone.deleteMany({ where: { userId: me, taskId } });
+}</code></pre></div></div><div class="note"><p><code>upsert</code>: insert the (user, task) row, or do nothing if it's already there, keeping the original time. Error <code>P2003</code> means the task doesn't exist, so the route answers 404.</p></div></article></section><section class="file" id="dates"><header class="file-head"><div class="eyebrow">Dates · Bangkok "today" and days_left</div><h3><code>api/src/lib/dates.js</code></h3><p class="lead">The reason the app never computes days: the server is the single source of "today", always in Bangkok time.</p></header><article class="chunk"><h4>todayBangkok()</h4><div class="code"><div class="code-head"><span>api/src/lib/dates.js</span><span>lines 4–10</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">4
+5
+6
+7
+8
+9
+10</pre><pre class="src"><code class="language-javascript">const DAY_MS = 24 * 60 * 60 * 1000;
+const BANGKOK_OFFSET_MS = 7 * 60 * 60 * 1000; // Asia/Bangkok is UTC+7, no daylight saving
+
+/** Today's date in Bangkok as "YYYY-MM-DD". Pass `now` in tests. */
+function todayBangkok(now = new Date()) {
+  return new Date(now.getTime() + BANGKOK_OFFSET_MS).toISOString().slice(0, 10);
+}</code></pre></div></div><div class="note"><p>Bangkok is always UTC+7 (no daylight saving). Add 7 hours to the current UTC time and take the date part. At 01:00 in Bangkok it's still yesterday in UTC, and this gets it right.</p></div></article><article class="chunk"><h4>daysBetween() = days_left</h4><div class="code"><div class="code-head"><span>api/src/lib/dates.js</span><span>lines 35–38</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">35
+36
+37
+38</pre><pre class="src"><code class="language-javascript">/** Whole days from `from` to `to` (both "YYYY-MM-DD"). Negative if `to` is earlier. */
+function daysBetween(from, to) {
+  return Math.round((fromDateStr(to).getTime() - fromDateStr(from).getTime()) / DAY_MS);
+}</code></pre></div></div><div class="note"><p>Both dates at UTC midnight, subtract, divide by one day. Due yesterday → −1, today → 0.</p></div></article></section><section class="file" id="schema"><header class="file-head"><div class="eyebrow">Tables · tasks and task_done</div><h3><code>api/prisma/schema.prisma</code></h3><p class="lead">How "done" works per student: done-ness isn't a column on the task. It's a separate table with one row per (student, task).</p></header><article class="chunk"><h4>Task and TaskDone</h4><div class="code"><div class="code-head"><span>api/prisma/schema.prisma</span><span>lines 38–65</span></div><div class="code-scroll"><pre class="gutter" aria-hidden="true">38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65</pre><pre class="src"><code class="language-plaintext">model Task {
+  id          Int        @id @default(autoincrement())
+  courseId    Int        @map("course_id")
+  title       String     @db.VarChar(100)
+  type        TaskType
+  dueDate     DateTime   @map("due_date") @db.Date
+  description String?    @db.Text
+  createdBy   Int        @map("created_by")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  course      Course     @relation(fields: [courseId], references: [id])
+  creator     User       @relation(fields: [createdBy], references: [id])
+  done        TaskDone[]
+
+  @@index([dueDate])
+  @@map("tasks")
+}
+
+model TaskDone {
+  userId Int      @map("user_id")
+  taskId Int      @map("task_id")
+  doneAt DateTime @default(now()) @map("done_at")
+  user   User     @relation(fields: [userId], references: [id])
+  task   Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@id([userId, taskId])
+  @@map("task_done")
+}</code></pre></div></div><div class="note"><p><code>@@id([userId, taskId])</code>: the pair is the primary key, so a student can't mark the same task done twice. <code>onDelete: Cascade</code>: deleting a task deletes its done rows too. <code>@map("due_date")</code>: called <code>dueDate</code> in code, <code>due_date</code> in the database.</p></div></article></section>
+
+<section class="block" id="quiz" style="margin-top:72px">
+  <h2>Check yourself</h2>
+  <p class="sub">Questions a teacher could ask in your demo. Try to answer before opening.</p>
+  <details><summary>Why does <code>_load()</code> check <code>mounted</code> before <code>setState</code>?</summary><p>The request takes time. If the user left the screen meanwhile, the widget is gone, and calling setState on it is an error.</p></details><details><summary>What does <code>_version</code> in HomeScreen do?</summary><p>It's part of each tab's key. Bumping it gives the tabs new keys, so Flutter rebuilds them from scratch and they reload.</p></details><details><summary>Why is the empty message inside a ListView?</summary><p>RefreshIndicator only works with something scrollable. The ListView (always scrollable, full height) makes pull-to-refresh work on an empty or failed tab.</p></details><details><summary>Why does TaskCard get functions instead of calling the API?</summary><p>The parent owns the data (lifting state up). The card only draws and reports taps, so it's simple and easy to test.</p></details><details><summary>Where does <code>days_left</code> come from? Why not compute it in the app?</summary><p>From the server, using Bangkok "today". The phone's clock or time zone could be wrong, and the server is the rule.</p></details><details><summary>What happens on a fast double tap of the checkbox?</summary><p>The second tap is ignored: <code>_busy</code> already contains the id. On the server the call is idempotent anyway.</p></details><details><summary>Row vs Column vs Expanded?</summary><p>Row = horizontal, Column = vertical, Expanded = "this child takes the leftover space".</p></details><details><summary>StatelessWidget vs StatefulWidget in your files?</summary><p>Stateful: HomeScreen (_version), TaskListTab (_tasks, _failed, _busy). Stateless: TaskCard, GroupHeader, EmptyState, TypeChip. They just draw their inputs.</p></details>
+</section>
+
+</main></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
+<script>
+  (function () {
+    var KEY = 'm2guide-toc-hidden';
+    var showBtn = document.getElementById('show-toc');
+    function setHidden(h, save) {
+      document.body.classList.toggle('toc-hidden', h);
+      showBtn.hidden = !h;
+      if (save) { try { localStorage.setItem(KEY, h ? '1' : '0'); } catch (e) {} }
+    }
+    var saved = false;
+    try { saved = localStorage.getItem(KEY) === '1'; } catch (e) {}
+    setHidden(saved, false);
+    document.getElementById('hide-toc').addEventListener('click', function () { setHidden(true, true); showBtn.focus(); });
+    showBtn.addEventListener('click', function () { setHidden(false, true); document.getElementById('hide-toc').focus(); });
+  })();
+  if (window.hljs) {
+    hljs.configure({ ignoreUnescapedHTML: true });
+    document.querySelectorAll('pre.src code:not(.language-plaintext)').forEach(function (el) { hljs.highlightElement(el); });
+  }
+</script>
